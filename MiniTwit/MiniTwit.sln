@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33326.253
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniTwit.Server", "MiniTwit\Server\MiniTwit.Server.csproj", "{E4163893-A3AC-4DC8-AAF6-54920A0C53A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniTwit.Server", "MiniTwit\Server\MiniTwit.Server.csproj", "{E4163893-A3AC-4DC8-AAF6-54920A0C53A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniTwit.Client", "MiniTwit\Client\MiniTwit.Client.csproj", "{F797485D-433B-474B-B109-7EFB1E6F0971}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniTwit.Client", "MiniTwit\Client\MiniTwit.Client.csproj", "{F797485D-433B-474B-B109-7EFB1E6F0971}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniTwit.Shared", "MiniTwit\Shared\MiniTwit.Shared.csproj", "{13D3B28B-6915-4610-A09E-69AB8450D89C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniTwit.Shared", "MiniTwit\Shared\MiniTwit.Shared.csproj", "{13D3B28B-6915-4610-A09E-69AB8450D89C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "MiniTwit\Infrastructure\Infrastructure.csproj", "{EE266498-29DE-481B-BB11-5834A576D09C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{13D3B28B-6915-4610-A09E-69AB8450D89C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13D3B28B-6915-4610-A09E-69AB8450D89C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13D3B28B-6915-4610-A09E-69AB8450D89C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE266498-29DE-481B-BB11-5834A576D09C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE266498-29DE-481B-BB11-5834A576D09C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE266498-29DE-481B-BB11-5834A576D09C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE266498-29DE-481B-BB11-5834A576D09C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

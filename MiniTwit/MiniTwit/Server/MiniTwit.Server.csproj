@@ -21,8 +21,8 @@
 		<ContainerPort Include="5000" Type="tcp" />
 		<ContainerPort Include="5001" Type="tcp" />
 		<ContainerEnvironmentVariable Include="ASPNETCORE_URLS" Value="http://localhost:5000;https://localhost:5001" />
-		<ContainerEnvironmentVariable Include="ASPNETCORE_HTTPS_PORT" Value="5001"/>
-		<ContainerEnvironmentVariable Include="ASPNETCORE_ENVIRONMENT" Value="Development"/>
+		<ContainerEnvironmentVariable Include="ASPNETCORE_HTTPS_PORT" Value="5001" />
+		<ContainerEnvironmentVariable Include="ASPNETCORE_ENVIRONMENT" Value="Development" />
 	</ItemGroup>
 
   <ItemGroup>
@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Client\MiniTwit.Client.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\Shared\MiniTwit.Shared.csproj" />
   </ItemGroup>
 

@@ -1,8 +1,8 @@
+using Infrastructure.Data;
+using Infrastructure.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using MiniTwit.Server.Data;
-using MiniTwit.Server.Models;
 using System.Collections;
 
 var builder = WebApplication.CreateBuilder(args);

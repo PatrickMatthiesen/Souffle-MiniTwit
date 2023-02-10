@@ -1,10 +1,10 @@
 ﻿using Duende.IdentityServer.EntityFramework.Options;
+using Infrastructure.Models;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using MiniTwit.Server.Models;
 
-namespace MiniTwit.Server.Data;
+namespace Infrastructure.Data;
 public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
 {
     public ApplicationDbContext(
