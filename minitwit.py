@@ -40,9 +40,6 @@ def init_db():
     with connect_db() as db:
         with app.open_resource('schema.sql', 'r') as f:
             sql_script = f.read()
-
-    # cursor = db.cursor()
-    # cursor.executescript(sql_script)
     
     db.cursor().executescript(sql_script)
     db.commit()
