@@ -30,45 +30,47 @@ SECRET_KEY = 'development key'
 app = Flask(__name__)
 
 
-def connect_db():
+def connect_db(): #gets called in init_db()
     """Returns a new connection to the database."""
     return sqlite3.connect(DATABASE)
 
-
+#creates_db tables and connects to the database
 def init_db():
     """Creates the database tables."""
-    with closing(connect_db()) as db:
+    with closing(connect_db()) as db: #when methods is evaluated connection is closed
         with app.open_resource('schema.sql') as f:
             db.cursor().executescript(f.read())
         db.commit()
 
 
-def query_db(query, args=(), one=False):
+#takes query and argument from flag_tool and queries db
+#returns a dictionary based on the query#
+def query_db(query, args=(), one=False): 
     """Queries the database and returns a list of dictionaries."""
     cur = g.db.execute(query, args)
     rv = [dict((cur.description[idx][0], value)
                for idx, value in enumerate(row)) for row in cur.fetchall()]
     return (rv[0] if rv else None) if one else rv
 
-
+#queries username#
 def get_user_id(username):
     """Convenience method to look up the id for a username."""
     rv = g.db.execute('select user_id from user where username = ?',
                       [username]).fetchone()
     return rv[0] if rv else None
 
-
+#returns datetime in another format for better visualization
 def format_datetime(timestamp):
     """Format a timestamp for display."""
     return datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d @ %H:%M')
 
-
+#returns image for an email address
 def gravatar_url(email, size=80):
     """Return the gravatar image for the given email address."""
     return 'http://www.gravatar.com/avatar/%s?d=identicon&s=%d' % \
         (md5(email.strip().lower().encode('utf-8')).hexdigest(), size)
 
-
+#before every request connects to db and set user we want to modify
 @app.before_request
 def before_request():
     """Make sure we are connected to the database each request and look
@@ -81,6 +83,7 @@ def before_request():
                           [session['user_id']], one=True)
 
 
+#closes connection after each request 
 @app.after_request
 def after_request(response):
     """Closes the database again at the end of the request."""
@@ -88,6 +91,8 @@ def after_request(response):
     return response
 
 
+#what home page displays. if we are logged in we get routed to /<username>
+#if we aren't logged in we get routed to /public
 @app.route('/')
 def timeline():
     """Shows a users timeline or if no user is logged in it will
@@ -106,7 +111,6 @@ def timeline():
                                     where who_id = ?))
         order by message.pub_date desc limit ?''',
                                                               [session['user_id'], session['user_id'], PER_PAGE]))
-
 
 @app.route('/public')
 def public_timeline():
@@ -180,7 +184,8 @@ def add_message():
         flash('Your message was recorded')
     return redirect(url_for('timeline'))
 
-
+#if user exists redirects to timeline (g.user)
+# authethication of user, either logins if autheticated else denies acces
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """Logs the user in."""
