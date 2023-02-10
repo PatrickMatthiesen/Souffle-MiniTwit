@@ -5,7 +5,7 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-RUN dotnet dev-certs https --trust
+# RUN dotnet dev-certs https --trust
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
@@ -18,7 +18,7 @@ WORKDIR "/src/MiniTwit/Server"
 RUN dotnet build "MiniTwit.Server.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "MiniTwit.Server.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "MiniTwit.Server.csproj" -c Release -o /app/publish /p:UseAppHost=false -p:PublishProfile=DefaultContainer --no-self-contained
 
 FROM base AS final
 WORKDIR /app
