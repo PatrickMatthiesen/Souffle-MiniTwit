@@ -8,14 +8,11 @@
     <EnableSdkContainerSupport>true</EnableSdkContainerSupport>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
-	<ContainerPublishProfile>DefaultContainer</ContainerPublishProfile>
-	<ContainerNoSelfContained></ContainerNoSelfContained>
+	<PublishProfile>DefaultContainer</PublishProfile>
+	<SelfContained>false</SelfContained>
     <ContainerRuntimeIdentifier>linux-x64</ContainerRuntimeIdentifier>
   </PropertyGroup>
 
-	<ItemGroup Label="Entrypoint Assignment">
-		<ContainerEntrypoint Include="dotnet;dev-certs;https;--trust" />
-	</ItemGroup>
 	
 	<ItemGroup>
 		<ContainerEnvironmentVariable Include="ConnectionStrings:MiniTwit-db">

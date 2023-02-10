@@ -23,7 +23,11 @@
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
       "publishAllPorts": true,
-      "useSSL": true
+      "useSSL": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ConnectionStrings:MiniTwit-db": "Server=host.docker.internal,1433;Database=MiniTwit-db;User Id=sa;Password=a282f131-5323-419c-9c8e-55535d486550;MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=True"
+      }
     }
   },
   "iisSettings": {

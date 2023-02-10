@@ -7,11 +7,6 @@ using System.Collections;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//var conString = builder.Configuration.GetConnectionString("DefaultConnection");
-//Console.WriteLine(conString);
-
-//var envVariables = Environment.GetEnvironmentVariables();
-
 foreach (DictionaryEntry e in Environment.GetEnvironmentVariables())
 {
     Console.WriteLine(e.Key + ":" + e.Value);
