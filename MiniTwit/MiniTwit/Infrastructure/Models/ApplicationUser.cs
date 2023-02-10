@@ -3,5 +3,6 @@
 namespace Infrastructure.Models;
 public class ApplicationUser : IdentityUser
 {
-    public List<ApplicationUser> follows { get; set; }
+    public List<Message> Messages { get; set; }
+    public List<ApplicationUser> Follows { get; set; }
 }
