@@ -1,12 +1,6 @@
 
-1. week
-- updated from python 2 -> 3 in the minitwit.py file
-- also updated control.sh file
-  - used shebang: #!/bin/bash
-  - changed from python -> python3
-
-2. week
-- started refactoring program
-- technology stack chosen: C# / blazor - webassembly
-- Distributed workflow:
--  
+    Which repository setup will we use?
+    Which branching model will we use?
+    Which distributed development workflow will we use?
+    How do we expect contributions to look like?
+    Who is responsible for integrating/reviewing contributions?
