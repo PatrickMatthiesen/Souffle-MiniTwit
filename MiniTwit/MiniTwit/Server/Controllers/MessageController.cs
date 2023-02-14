@@ -3,51 +3,38 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MiniTwit.Shared.DTO;
+using MiniTwit.Shared.IRepositories;
+using MiniTwit.Shared.Util;
 
 namespace MiniTwit.Server.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class MessageController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    //inject the message repository
+    private readonly IMessageRepository _messageRepository;
 
-    public MessageController(ApplicationDbContext context)
+    public MessageController(IMessageRepository messageRepository)
     {
-        _context = context;
+        _messageRepository = messageRepository;
     }
 
     [HttpGet]
     public async Task<ActionResult<List<MessageDTO>>> Get()
     {
-        return await _context.Messages.Select(m => new MessageDTO
-        {
-            Text = m.Text,
-            PubDate = m.PubDate,
-            AuthorId = m.Id,
-            Flagged = m.Flagged
-        }).ToListAsync();
+        return await _messageRepository.ReadAll();
     }
 
     [HttpGet("/message/{id}")]
     public async Task<ActionResult<MessageDTO>> GetMessageById(int id)
     {
-        var message = await _context.Messages.FindAsync(id);
-
-        if (message == null)
-        {
-            return NotFound();
-        }
-
-        return new MessageDTO
-        {
-            Text = message.Text,
-            PubDate = message.PubDate,
-            AuthorId = message.Id,
-            Flagged = message.Flagged
-        };
+        return (await _messageRepository.ReadAsync(id)).ToActionResult();
     }
 
-    [HttpPost("/add_message/{userId}")]
-    public async Task<IActionResult> AddMessageByUserId();
+    [HttpPost("/add_message")]
+    public async Task<IActionResult> AddMessage([FromBody] MessageDTO message)
+    {
+        return (await _messageRepository.AddMessage(message)).ToActionResult();
+    }
 
 }

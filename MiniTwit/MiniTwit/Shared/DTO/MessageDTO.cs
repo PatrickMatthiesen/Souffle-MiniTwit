@@ -9,6 +9,6 @@ public record MessageDTO
 {
     public string Text { get; init; }
     public DateTime PubDate { get; init; }
-    public int AuthorId { get; init; }
+    public string AuthorId { get; init; }
     public int Flagged { get; init; }
 }

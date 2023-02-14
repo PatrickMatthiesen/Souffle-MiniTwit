@@ -1,15 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MiniTwit.Shared.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MiniTwit.Shared.DTO;
 
 namespace MiniTwit.Shared.IRepositories;
 public interface IMessageRepository
 {
-    public Task<List<MessageDTO>> Get();
-    public Task<MessageDTO> GetMessageById(int id);
-    public Task<IActionResult> AddMessage();
+    public Task<List<MessageDTO>> ReadAll();
+    public Task<Option<MessageDTO>> ReadAsync(int id);
+    public Task<Response> AddMessage(MessageDTO message);
 }

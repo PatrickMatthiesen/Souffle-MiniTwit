@@ -1,9 +1,11 @@
 using Infrastructure.Data;
 using Infrastructure.Models;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using MiniTwit.Shared.IRepositories;
 using System.Collections;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,6 +41,8 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "SourceTracking.Server", Version = "v1" });
     c.UseInlineDefinitionsForEnums();
 });
+
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
 var app = builder.Build();
 
