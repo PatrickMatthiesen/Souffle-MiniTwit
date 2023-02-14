@@ -7,10 +7,13 @@ namespace MiniTwit.Server.Controllers;
 public class UserController : ControllerBase
 {
     [HttpGet]
-    public IActionResult Get()
+    public IActionResult<List<UserDTO>> GetFollowers (string user)
     {
         return Ok("Hello World");
     }
 
     
 }
+// username, httpget
+// follow 
+// unfollows

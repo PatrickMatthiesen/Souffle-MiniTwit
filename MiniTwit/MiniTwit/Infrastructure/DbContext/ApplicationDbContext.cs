@@ -9,6 +9,7 @@ namespace Infrastructure.Data;
 public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
 {
     public DbSet<Message> Messages => Set<Message>();
+    // public DbSet<ApplicationUser> Users => Set<ApplicationUser>();
     
     public ApplicationDbContext(
         DbContextOptions options,
