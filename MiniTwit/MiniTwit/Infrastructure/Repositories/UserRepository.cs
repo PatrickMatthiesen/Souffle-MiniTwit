@@ -89,6 +89,28 @@ public class UserRepository : IUserRepository
         return returnList;
     }
 
+    public async Task<Response> UnFollow(string Id_own, string Id_target)
+    {
+        var entity = await _context.Users.FindAsync(Id_own);
+
+        var target = entity.Follows.FirstOrDefault(f => f.Id == Id_target);
+
+        Response response;
+
+        if (target is not null)
+        {
+            entity.Follows.Remove(target);
+            await _context.SaveChangesAsync();
+            response = Response.Updated;
+        }
+        else
+        {
+            response = Response.NotFound;
+        }
+        return response;
+    }
+
+
     public async Task<List<MessageDTO>> ReadMessagesFromUserIdAsync(string Id)
     {
         var entity = await _context.Users.FindAsync(Id);

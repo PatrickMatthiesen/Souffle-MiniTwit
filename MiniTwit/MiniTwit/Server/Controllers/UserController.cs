@@ -22,7 +22,7 @@ public class UserController : ControllerBase
 
     }
 
-    [HttpGet("/{userId}")]
+    [HttpGet("/{userId}/messages")]
     public async Task<List<MessageDTO>> GetAllMessages(string userId)
     {
         return await _repository.ReadMessagesFromUserIdAsync(userId);
