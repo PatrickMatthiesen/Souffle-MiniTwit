@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MiniTwit.Shared.DTO;
+using MiniTwit.Shared.IRepositories;
 
 namespace MiniTwit.Server.Controllers;
 
@@ -7,13 +8,28 @@ namespace MiniTwit.Server.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
-    [HttpGet]
-    public ActionResult<List<UserDTO>> GetFollowers (string user)
+    private readonly IUserRepository _repository;
+
+    public UserController(IUserRepository repository)
     {
-        return Ok("Hello World");
+        _repository = repository;
     }
 
-    
+    [HttpGet("/{userId}/follows")]
+    public async Task<ActionResult<List<UserDTO>>> GetFollowers(string userId)
+    {
+        return await _repository.ReadFollowsAsync(userId);
+
+    }
+
+    [HttpGet("/{userId}")]
+    public async Task<List<MessageDTO>> GetAllMessages(string userId)
+    {
+        return await _repository.ReadMessagesFromUserIdAsync(userId);
+    }
+
+
+
 }
 // username, httpget
 // follow 

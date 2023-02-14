@@ -1,3 +1,4 @@
+using System.Net.Mime;
 namespace MiniTwit.Infrastructure.Repositories;
 
 using System;
@@ -9,6 +10,7 @@ using MiniTwit.Shared.DTO;
 using MiniTwit.Shared.IRepositories;
 
 
+
 public class UserRepository : IUserRepository
 {
     private readonly ApplicationDbContext _context;
@@ -18,67 +20,68 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
-    public (Response Response, string UserId) Create(UserCreateDTO user)
+    public async Task<(Response Response, string UserId)> CreateAsync(UserCreateDTO user)
     {
-        var entity = _context.Users.FirstOrDefault ( u => u.Email == user.Email);
+        var entity = await _context.Users.FindAsync(user);
 
         Response response;
-        
-        if (entity is null) {
+
+        if (entity is null)
+        {
 
             entity = new ApplicationUser(user.Name, user.Email);
-            
 
-            _context.AddAsync(entity);
-            _context.SaveChangesAsync();
+
+            await _context.AddAsync(entity);
+            await _context.SaveChangesAsync();
 
             response = Response.Created;
-        } else {
+        }
+        else
+        {
             response = Response.Conflict;
         }
         return (response, entity.Id);
-    
+
     }
 
-    
-    public UserDTO Find(string userId)
-    {
-        var entity = _context.Users.FirstOrDefault(u => u.Id == userId);
 
-        return new UserDTO (userId, entity.UserName, entity.Email);
-        
+    public async Task<UserDTO> FindAsync(string userId)
+    {
+        var entity = await _context.Users.FindAsync(userId);
+
+        return new UserDTO(userId, entity.UserName, entity.Email);
+
     }
 
-     public Response Update(UserUpdateDTO user)
+    public async Task<Response> UpdateAsync(UserUpdateDTO user)
     {
-        var entity = _context.Users.FirstOrDefault(u => u.Id == user.Id);
+        var entity = await _context.Users.FindAsync(user);
         entity.Id = user.Id;
         entity.UserName = user.Name;
         entity.Email = user.Email;
 
-        var entity2 = _context.Users.FirstOrDefault(u => u.Id == user.Id);
-         
         if (entity is null)
         {
             return Response.NotFound;
         }
-            else 
+        else
         {
             _context.Users.Update(entity);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             return Response.Updated;
         }
     }
-    
 
-    public IReadOnlyCollection<UserDTO> ReadFollows(string Id)
+
+    public async Task<List<UserDTO>> ReadFollowsAsync(string Id)
     {
-        var entity = _context.Users.FirstOrDefault(u => u.Id == u.Id);
-        
+        var entity = await _context.Users.FindAsync(Id);
+
         var returnList = new List<UserDTO>();
-        
-        foreach (var f in entity.Follows) 
+
+        foreach (var f in entity.Follows)
         {
             returnList.Add(new UserDTO(f.Id, f.UserName, f.Email));
         }
@@ -86,21 +89,36 @@ public class UserRepository : IUserRepository
         return returnList;
     }
 
-   
-
-    public Response Delete(string userId, bool force = false)
+    public async Task<List<MessageDTO>> ReadMessagesFromUserIdAsync(string Id)
     {
-        var entity = _context.Users.FirstOrDefault(u => u.Id == userId);
-        
+        var entity = await _context.Users.FindAsync(Id);
+
+        var messages = new List<MessageDTO>();
+
+        foreach (var m in entity.Messages)
+        {
+            messages.Add(new MessageDTO { Text = m.Text, PubDate = m.PubDate, AuthorId = Id, Flagged = m.Flagged });
+        }
+
+        return messages;
+    }
+
+
+    public async Task<Response> DeleteAsync(string userId, bool force = false)
+    {
+        var entity = await _context.Users.FindAsync(userId);
+
         Response response;
 
-        if (entity is null) 
+        if (entity is null)
         {
             response = Response.NotFound;
-        } else {
+        }
+        else
+        {
             _context.Users.Remove(entity);
-            _context.SaveChangesAsync();
-            
+            await _context.SaveChangesAsync();
+
             response = Response.Deleted;
         }
 
