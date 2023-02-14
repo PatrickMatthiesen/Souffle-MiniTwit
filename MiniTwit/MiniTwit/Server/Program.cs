@@ -7,10 +7,10 @@ using System.Collections;
 
 var builder = WebApplication.CreateBuilder(args);
 
-foreach (DictionaryEntry e in Environment.GetEnvironmentVariables())
-{
-    Console.WriteLine(e.Key + ":" + e.Value);
-}
+//foreach (DictionaryEntry e in Environment.GetEnvironmentVariables())
+//{
+//    Console.WriteLine(e.Key + ":" + e.Value);
+//}
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("MiniTwit-db") ?? throw new InvalidOperationException("Connection string 'MiniTwit-db' not found.");

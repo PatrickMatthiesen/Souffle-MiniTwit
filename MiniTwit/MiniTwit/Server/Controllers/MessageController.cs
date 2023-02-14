@@ -6,4 +6,9 @@ namespace MiniTwit.Server.Controllers;
 [ApiController]
 public class MessageController : ControllerBase
 {
+    [HttpGet]
+    public Task<ActionResult<MessageDTO>> Get()
+    {
+        return Ok("Hello World");
+    }
 }
