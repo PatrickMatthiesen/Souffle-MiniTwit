@@ -80,7 +80,7 @@ public class UserRepository : IUserRepository
         
         foreach (var f in entity.Follows) 
         {
-            new UserDTO(f.Id, f.UserName, f.Email);
+            returnList.Add(new UserDTO(f.Id, f.UserName, f.Email));
         }
 
         return returnList;
