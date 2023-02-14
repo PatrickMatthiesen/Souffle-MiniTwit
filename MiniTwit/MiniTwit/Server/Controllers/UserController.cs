@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MiniTwit.Shared.DTO;
 
 namespace MiniTwit.Server.Controllers;
 
@@ -7,7 +8,7 @@ namespace MiniTwit.Server.Controllers;
 public class UserController : ControllerBase
 {
     [HttpGet]
-    public IActionResult<List<UserDTO>> GetFollowers (string user)
+    public ActionResult<List<UserDTO>> GetFollowers (string user)
     {
         return Ok("Hello World");
     }

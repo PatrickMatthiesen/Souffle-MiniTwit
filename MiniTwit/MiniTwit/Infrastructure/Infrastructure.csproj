@@ -12,9 +12,8 @@
 	<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
   </ItemGroup>
 
-  <ItemGroup> 
-    <ProjectReference Include="../Shared/MiniTwit.Shared.csproj" />
-
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\MiniTwit.Shared.csproj" />
   </ItemGroup>
 
 </Project>
