@@ -30,7 +30,8 @@ builder.Services.AddIdentityServer()
     .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
 builder.Services.AddAuthentication()
-    .AddIdentityServerJwt();
+    .AddIdentityServerJwt()
+    .AddCookie();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
