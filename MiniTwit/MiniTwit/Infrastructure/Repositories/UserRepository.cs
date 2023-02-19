@@ -1,16 +1,10 @@
-using System.Net.Mime;
-namespace MiniTwit.Infrastructure.Repositories;
-
-using System;
-using System.Collections.Generic;
-using global::Infrastructure.Data;
-using global::Infrastructure.Models;
+using Infrastructure.Data;
+using Infrastructure.Models;
 using MiniTwit.Shared;
 using MiniTwit.Shared.DTO;
 using MiniTwit.Shared.IRepositories;
 
-
-
+namespace MiniTwit.Infrastructure.Repositories;
 public class UserRepository : IUserRepository
 {
     private readonly ApplicationDbContext _context;
