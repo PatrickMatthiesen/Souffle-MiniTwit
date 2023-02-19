@@ -5,9 +5,12 @@ using MiniTwit.Shared.DTO;
 
 public interface IUserRepository
 {
-    (Response Response, string UserId) Create(UserCreateDTO user);
-    UserDTO Find(string userId);
-    IReadOnlyCollection<UserDTO> ReadFollows(string userId);
-    Response Update(UserUpdateDTO user);
-    Response Delete(string userId, bool force = false);
+    Task<(Response Response, string UserId)> CreateAsync(UserCreateDTO user);
+    Task<UserDTO> FindAsync(string userId);
+    Task<Response> UpdateAsync(UserUpdateDTO user);
+    Task<List<UserDTO>> ReadFollowsAsync(string Id);
+    Task<Response> UnFollow(string Id_own, string Id_target);
+    Task<List<MessageDTO>> ReadMessagesFromUserIdAsync(string Id);
+    Task<Response> DeleteAsync(string userId, bool force = false);
+
 }
