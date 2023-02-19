@@ -74,7 +74,6 @@ public class UserRepository : IUserRepository
         }
     }
 
-
     public async Task<List<UserDTO>> ReadFollowsAsync(string Id)
     {
         var entity = await _context.Users.FindAsync(Id);
@@ -89,11 +88,11 @@ public class UserRepository : IUserRepository
         return returnList;
     }
 
-    public async Task<Response> UnFollow(string Id_own, string Id_target)
+    public async Task<Response> UnFollow(string Id_Own, string Id_Target)
     {
-        var entity = await _context.Users.FindAsync(Id_own);
+        var entity = await _context.Users.FindAsync(Id_Own);
 
-        var target = entity.Follows.FirstOrDefault(f => f.Id == Id_target);
+        var target = entity.Follows.FirstOrDefault(f => f.Id == Id_Target);
 
         Response response;
 
@@ -106,6 +105,28 @@ public class UserRepository : IUserRepository
         else
         {
             response = Response.NotFound;
+        }
+        return response;
+    }
+
+    public async Task<Response> Follow(string Id_Own, string Id_Target)
+    {
+        var entity = await _context.Users.FindAsync(Id_Own);
+
+        var target = entity.Follows.FirstOrDefault(f => f.Id == Id_Target);
+
+        Response response;
+        if (target is null) { }
+
+        if (entity.Follows.Contains(target))
+        {
+            response = Response.Conflict;
+        }
+        else
+        {
+            entity.Follows.Add(target);
+            await _context.SaveChangesAsync();
+            response = Response.Updated;
         }
         return response;
     }
