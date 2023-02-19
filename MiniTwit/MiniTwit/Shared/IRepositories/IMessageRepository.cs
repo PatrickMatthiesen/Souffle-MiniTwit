@@ -5,6 +5,6 @@ public interface IMessageRepository
 {
     public Task<List<MessageDTO>> ReadAll();
     public Task<Option<MessageDTO>> ReadAsync(int id);
-    public Task<List<MessageDTO>> ReadByUser(string userId);
-    public Task<Response> AddMessage(CreateMessageDTO message);
+    public Task<List<MessageDTO>> ReadByUserId(string userId);
+    public Task<Option<MessageDTO>> AddMessage(CreateMessageDTO message);
 }

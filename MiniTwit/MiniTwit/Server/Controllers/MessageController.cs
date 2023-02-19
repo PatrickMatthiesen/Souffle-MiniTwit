@@ -34,13 +34,13 @@ public class MessageController : ControllerBase
     [HttpGet("user/{userId}")]
     public async Task<ActionResult<List<MessageDTO>>> GetMessagesByUserId(string userId)
     {
-        return await _messageRepository.ReadByUser(userId);
+        return await _messageRepository.ReadByUserId(userId);
     }
 
     [HttpPost("add")]
-    public async Task<IActionResult> AddMessage([FromBody] CreateMessageDTO message)
+    public async Task<ActionResult<MessageDTO>> AddMessage([FromBody] CreateMessageDTO message)
     {
-        return (await _messageRepository.AddMessage(message)).ToActionResult();
+        return await _messageRepository.AddMessage(message).ToActionResult();
     }
 
 }

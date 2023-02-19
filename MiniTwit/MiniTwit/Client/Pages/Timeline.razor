@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Authorization;
 @using MiniTwit.Shared.DTO;
 @inject HttpClient _http;
+@inject AuthenticationStateProvider _authenticationStateProvider;
 @page "/timeline/{Username?}";
 @attribute [Authorize]
 
@@ -12,55 +13,44 @@
 }
 else
 {
-    if (true) // change to if Username is the name of the loged in user'
+    if (Username == currentUser || currentUser is null) // change to if Username is the name of the loged in user'
     {
-        <NewMessageTextBox Username="@Username"/>
+        <NewMessageTextBox _messages="@Tweets" OnSend="@(() => StateHasChanged())" />
     }
-    @foreach (var tweet in Tweets)
+    @for (int i = Tweets.Count-1; i >= 0; i--)
     {
-        <div class="m-5 rounded border border-primary">
-            <div class="m-2">@tweet.AuthorId</div>
-            <div>
-                @tweet.Text
-            </div>
+        <div class="m-3 rounded border border-primary">
+            <a href="timeline/@Tweets[i].AuthorName" class="m-2">@Tweets[i].AuthorName</a>
+            <div class="m-2">@Tweets[i].Text</div>
         </div>
     }
-
 }
 
 @code {
     [Parameter]
     public string? Username { get; set; }
 
+    private string? currentUser;
+
     public List<MessageDTO> Tweets { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        SetCurrentUser();
         if (Username is null)
         {
-            Tweets = new List<MessageDTO>
-            {
-                new MessageDTO
-                {
-                    Text = "hej jeg har ikke rigtig noget at sige men jeg fylder lige noget plads",
-                    AuthorId = "1",
-                    PubDate = DateTime.Now
-                },
-                new MessageDTO
-                {
-                    Text = "hvis du gør kan jeg vel også, syntes sådan det er dejligt at være med på lejen :)",
-                    AuthorId = "2",
-                    PubDate = DateTime.Now
-                }
-            };
-            //Tweets = await _http.GetFromJsonAsync<List<MessageDTO>>("api/timeline");
-
+            //TODO fix to be a small set of the lates messages
+            Tweets = await _http.GetFromJsonAsync<List<MessageDTO>>($"api/Message");
         }
         else
         {
-            //Tweets = await _http.GetFromJsonAsync<List<MessageDTO>>($"api/timeline/{Username}");
+            var userid = (await _authenticationStateProvider.GetAuthenticationStateAsync()).User.FindFirst(c => c.Type == "sub").Value;
+            Tweets = await _http.GetFromJsonAsync<List<MessageDTO>>($"api/Message/user/{userid}");
         }
+    }
 
-
+    async void SetCurrentUser()
+    {
+        currentUser = (await _authenticationStateProvider.GetAuthenticationStateAsync()).User.Identity.Name;
     }
 }

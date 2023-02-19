@@ -1,0 +1,17 @@
+﻿@page "/MyTimeline"
+@inject NavigationManager _navManager
+@inject AuthenticationStateProvider _authenticationStateProvider
+@attribute [Authorize]
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        _navManager.NavigateTo("/timeline/" + await CurrentUser());
+    }
+
+    async Task<string> CurrentUser()
+    {
+        var userName = (await _authenticationStateProvider.GetAuthenticationStateAsync()).User.Identity.Name;
+        return userName;
+    }
+}

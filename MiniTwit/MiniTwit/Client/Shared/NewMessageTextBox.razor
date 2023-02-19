@@ -12,9 +12,12 @@
 
 @code {
     private readonly CreateMessageDTO _message = new();
-    
+
     [Parameter]
-    public required string Username { get; set; }
+    public required List<MessageDTO> _messages { get; set; }
+
+    [Parameter]
+    public EventCallback<Task> OnSend { get; set; }
 
     private EditContext? _editContext;
 
@@ -22,16 +25,19 @@
     protected override void OnInitialized()
     {
         _editContext = new EditContext(_message);
-
     }
 
     async void SendMessage()
     {
         _message.AuthorId = (await _authenticationStateProvider.GetAuthenticationStateAsync()).User.FindFirst(c => c.Type == "sub").Value;
         var responce = await _http.PostAsJsonAsync("api/Message/add", _message);
-        if (responce.IsSuccessStatusCode)
-        {
-            _message.Text = "";
-        }
+        if (!responce.IsSuccessStatusCode) return;
+
+        _message.Text = "";
+        var message = await responce.Content.ReadFromJsonAsync<MessageDTO>();
+        _messages.Add(message);
+
+        await OnSend.InvokeAsync();
+        StateHasChanged();
     }
 }
