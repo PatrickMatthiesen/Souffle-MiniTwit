@@ -49,7 +49,23 @@ public class MessageRepository : IMessageRepository
             Flagged = message.Flagged
         };
     }
-    public async Task<Response> AddMessage(MessageDTO message)
+
+    // get all messages from a specific user
+    public Task<List<MessageDTO>> ReadByUser(string userId)
+    {
+        return _context.Users.Include(u => u.Messages)
+            .Where(u => u.Id == userId)
+            .SelectMany(u => u.Messages)
+            .Select(m => new MessageDTO
+            {
+                Text = m.Text,
+                PubDate = m.PubDate,
+                AuthorId = m.Author.Id,
+                Flagged = m.Flagged
+            }).ToListAsync();
+    }
+
+    public async Task<Response> AddMessage(CreateMessageDTO message)
     {
         var author = await _context.Users.FindAsync(message.AuthorId);
 
@@ -63,7 +79,7 @@ public class MessageRepository : IMessageRepository
             Text = message.Text,
             PubDate = DateTime.Now,
             Author = author,
-            Flagged = message.Flagged
+            Flagged = 0 //TODO
         });
 
         await _context.SaveChangesAsync();

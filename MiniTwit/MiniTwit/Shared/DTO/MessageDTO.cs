@@ -7,8 +7,14 @@ using System.Threading.Tasks;
 namespace MiniTwit.Shared.DTO;
 public record MessageDTO
 {
-    public string Text { get; init; }
-    public DateTime PubDate { get; init; }
-    public string AuthorId { get; init; }
-    public int Flagged { get; init; }
+    public string Text { get; set; }
+    public DateTime PubDate { get; set; }
+    public string AuthorId { get; set; }
+    public int Flagged { get; set; }
+}
+
+public record CreateMessageDTO
+{
+    public string Text { get; set; }
+    public string AuthorId { get; set; }
 }

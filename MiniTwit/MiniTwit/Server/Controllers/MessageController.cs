@@ -25,14 +25,20 @@ public class MessageController : ControllerBase
         return await _messageRepository.ReadAll();
     }
 
-    [HttpGet("/message/{id}")]
+    [HttpGet("{id}")]
     public async Task<ActionResult<MessageDTO>> GetMessageById(int id)
     {
         return (await _messageRepository.ReadAsync(id)).ToActionResult();
     }
 
-    [HttpPost("/add_message")]
-    public async Task<IActionResult> AddMessage([FromBody] MessageDTO message)
+    [HttpGet("user/{userId}")]
+    public async Task<ActionResult<List<MessageDTO>>> GetMessagesByUserId(string userId)
+    {
+        return await _messageRepository.ReadByUser(userId);
+    }
+
+    [HttpPost("add")]
+    public async Task<IActionResult> AddMessage([FromBody] CreateMessageDTO message)
     {
         return (await _messageRepository.AddMessage(message)).ToActionResult();
     }
