@@ -17,6 +17,7 @@ public static class ToActionResultExtensions
             Deleted => new NoContentResult(),
             NotFound => new NotFoundResult(),
             Conflict => new ConflictResult(),
+            Created => new CreatedResult("", null),
             //Success => new OkResult(),
             _ => throw new NotSupportedException($"{response} not supported")
         };

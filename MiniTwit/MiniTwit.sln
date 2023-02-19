@@ -9,11 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniTwit.Client", "MiniTwit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniTwit.Shared", "MiniTwit\Shared\MiniTwit.Shared.csproj", "{13D3B28B-6915-4610-A09E-69AB8450D89C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "MiniTwit\Infrastructure\Infrastructure.csproj", "{EE266498-29DE-481B-BB11-5834A576D09C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "MiniTwit\Infrastructure\Infrastructure.csproj", "{EE266498-29DE-481B-BB11-5834A576D09C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{21E56AEA-B0B1-4006-861C-370EEF085CD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Tests", "Tests\Server.Tests\Server.Tests.csproj", "{1F4E0166-F5A2-49C9-8EE4-98DFE03CD239}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server.Tests", "Tests\Server.Tests\Server.Tests.csproj", "{1F4E0166-F5A2-49C9-8EE4-98DFE03CD239}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +45,10 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {4E02A138-12CE-4128-9B97-FEE1ACB9276E}
-	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1F4E0166-F5A2-49C9-8EE4-98DFE03CD239} = {21E56AEA-B0B1-4006-861C-370EEF085CD1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4E02A138-12CE-4128-9B97-FEE1ACB9276E}
 	EndGlobalSection
 EndGlobal

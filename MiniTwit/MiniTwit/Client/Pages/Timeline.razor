@@ -1,0 +1,66 @@
+﻿@using Microsoft.AspNetCore.Authorization;
+@using MiniTwit.Shared.DTO;
+@inject HttpClient _http;
+@page "/timeline/{Username?}";
+@attribute [Authorize]
+
+<h3>Timeline</h3>
+
+@if (Tweets is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    if (true) // change to if Username is the name of the loged in user'
+    {
+        <NewMessageTextBox Username="@Username"/>
+    }
+    @foreach (var tweet in Tweets)
+    {
+        <div class="m-5 rounded border border-primary">
+            <div class="m-2">@tweet.AuthorId</div>
+            <div>
+                @tweet.Text
+            </div>
+        </div>
+    }
+
+}
+
+@code {
+    [Parameter]
+    public string? Username { get; set; }
+
+    public List<MessageDTO> Tweets { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Username is null)
+        {
+            Tweets = new List<MessageDTO>
+            {
+                new MessageDTO
+                {
+                    Text = "hej jeg har ikke rigtig noget at sige men jeg fylder lige noget plads",
+                    AuthorId = "1",
+                    PubDate = DateTime.Now
+                },
+                new MessageDTO
+                {
+                    Text = "hvis du gør kan jeg vel også, syntes sådan det er dejligt at være med på lejen :)",
+                    AuthorId = "2",
+                    PubDate = DateTime.Now
+                }
+            };
+            //Tweets = await _http.GetFromJsonAsync<List<MessageDTO>>("api/timeline");
+
+        }
+        else
+        {
+            //Tweets = await _http.GetFromJsonAsync<List<MessageDTO>>($"api/timeline/{Username}");
+        }
+
+
+    }
+}
