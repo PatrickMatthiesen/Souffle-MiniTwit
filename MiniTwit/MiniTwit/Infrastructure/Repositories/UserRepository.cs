@@ -26,7 +26,11 @@ public class UserRepository : IUserRepository
         
         if (entity is null) {
 
-            entity = new ApplicationUser(user.Name, user.Email);
+            entity = new ApplicationUser
+            {
+                UserName = user.Name,
+                Email = user.Email
+            };
             
 
             _context.AddAsync(entity);
