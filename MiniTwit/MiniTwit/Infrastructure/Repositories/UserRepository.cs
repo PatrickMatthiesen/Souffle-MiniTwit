@@ -136,7 +136,7 @@ public class UserRepository : IUserRepository
 
         foreach (var m in entity.Messages)
         {
-            messages.Add(new MessageDTO { Text = m.Text, PubDate = m.PubDate, AuthorId = Id, Flagged = m.Flagged });
+            messages.Add(new MessageDTO { Text = m.Text, PubDate = m.PubDate, AuthorName = m.Author.UserName });
         }
 
         return messages;
