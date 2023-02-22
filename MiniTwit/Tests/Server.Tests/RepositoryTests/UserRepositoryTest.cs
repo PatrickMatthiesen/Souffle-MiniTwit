@@ -2,9 +2,12 @@ namespace Server.Tests;
 
 using Duende.IdentityServer.EntityFramework.Options;
 using Infrastructure.Models;
+using Infrastructure.Repositories;
 using Microsoft.Extensions.Options;
 using MiniTwit.Infrastructure.Repositories;
+using MiniTwit.Shared;
 using MiniTwit.Shared.DTO;
+using Moq;
 
 public sealed class UserRepositoryTests : IAsyncDisposable
 {
@@ -29,12 +32,7 @@ public sealed class UserRepositoryTests : IAsyncDisposable
         var Kure = new ApplicationUser{ UserName = "Kure", Id = "1", Email="Kure@itu.dk"};
         var Smus = new ApplicationUser{ UserName = "Smus", Id = "2", Email="Smus@itu.dk"};
 
-        var message1 = new Message {Author = Asger, Id = 0, Text = "Asger says hello"};
-        //var message2 = new Message {Author = Smus, Id = 1, Text = "Hi Asger!"};
-
         context.Users.AddRange(Asger, Kure, Smus);
-        context.Messages.AddRange(message1);
-        //context.Messages.AddRange(message1, message2);
         
         context.SaveChanges();
 
@@ -45,7 +43,7 @@ public sealed class UserRepositoryTests : IAsyncDisposable
     [Fact]
     public async Task CreateAsync_Succes()
     {
-        var expected = new UserCreateDTO ("5","Patrik","Patrik@itu.dk");
+        var expected = new UserCreateDTO ("5","Patrick","Patrick@itu.dk");
         var (response , userId) = await _repository.CreateAsync(expected);
         
         var (findResponse, entity) = await _repository.FindAsync(userId);
@@ -66,16 +64,15 @@ public sealed class UserRepositoryTests : IAsyncDisposable
 
 
     [Fact]
-    public async Task FindAsync_OK()
+    public async Task FindAsync_NotFound()
     {
         var (result, UserDTO) = await _repository.FindAsync("42");
         Assert.Equal(MiniTwit.Shared.Response.NotFound, result);
     }
 
     [Fact]
-    public async Task FindAsync_NotFound()
+    public async Task FindAsync_OK()
     {   
-        
         var expected = new UserDTO("1","Kure","Kure@itu.dk");
         var (result, UserDTO) = await _repository.FindAsync("1");
         
@@ -96,7 +93,7 @@ public sealed class UserRepositoryTests : IAsyncDisposable
     [Fact]
     public async Task UpdateAsync_NotFound()
     {
-        var UpdateDTO = new UserUpdateDTO("42","Patrik","Patrik@itu.dk");
+        var UpdateDTO = new UserUpdateDTO("42","Patrick","Patrick@itu.dk");
 
         var result = await _repository.UpdateAsync(UpdateDTO);
         
@@ -106,7 +103,7 @@ public sealed class UserRepositoryTests : IAsyncDisposable
     [Fact]
     public async Task Follow_OK()
     {
-        var expectedFollower = new UserCreateDTO ("5","Patrik","Patrik@itu.dk");
+        var expectedFollower = new UserCreateDTO ("5","Patrick","Patrick@itu.dk");
         var (response1 , followerId) = await _repository.CreateAsync(expectedFollower);
 
         var targetFollower = new UserCreateDTO ("10","Søren","Søren@itu.dk");
@@ -120,7 +117,7 @@ public sealed class UserRepositoryTests : IAsyncDisposable
     [Fact]
     public async Task Follow_Conflict()
     {
-        var expectedFollower = new UserCreateDTO ("5","Patrik","Patrik@itu.dk");
+        var expectedFollower = new UserCreateDTO ("5","Patrick","Patrick@itu.dk");
         var (response1 , followerId) = await _repository.CreateAsync(expectedFollower);
 
         var targetFollower = new UserCreateDTO ("10","Søren","Søren@itu.dk");
@@ -135,7 +132,7 @@ public sealed class UserRepositoryTests : IAsyncDisposable
     [Fact]
     public async Task ReadFollowsAsync()
     {
-        var expectedFollower = new UserCreateDTO ("5","Patrik","Patrik@itu.dk");
+        var expectedFollower = new UserCreateDTO ("5","Patrick","Patrick@itu.dk");
         var (response1 , followerId) = await _repository.CreateAsync(expectedFollower);
 
         var targetFollower = new UserCreateDTO ("10","Søren","Søren@itu.dk");
@@ -153,7 +150,7 @@ public sealed class UserRepositoryTests : IAsyncDisposable
     [Fact]
     public async Task Unfollow()
     {
-        var expectedFollower = new UserCreateDTO ("5","Patrik","Patrik@itu.dk");
+        var expectedFollower = new UserCreateDTO ("5","Patrick","Patrick@itu.dk");
         var (response1 , followerId) = await _repository.CreateAsync(expectedFollower);
 
         var targetFollower = new UserCreateDTO ("10","Søren","Søren@itu.dk");
@@ -166,6 +163,54 @@ public sealed class UserRepositoryTests : IAsyncDisposable
         var expectedList = new List<UserDTO> {} ;
 
         Assert.Equal(result,expectedList);
+    }
+
+    /*
+        The following methods is outcommented due to an error with the how messages interacts with the user -
+        method might be redundant
+    */
+    
+    // [Fact]
+    // public async Task ReadMessagesFromUserIdAsync()
+    // {   
+        
+    //     var userDTO = new UserCreateDTO ("5","Patrick","Patrick@itu.dk");
+    //     var (userResponse , userId) = await _repository.CreateAsync(userDTO);
+
+    //     var user = new ApplicationUser{UserName = "Patrick"};
+
+    //     var message1 = new Message {Author = user, Id = 0, Text = "Patrick says hello"};
+        
+    //     _context.Messages.Add(message1);
+
+    //    var Messages = await _repository.ReadMessagesFromUserIdAsync(userId);
+
+    //    Assert.Equal(1, Messages.Count());
+        
+    // }
+    
+    [Fact]
+    public async Task DeleteAsync_Succes()
+    {
+        var expected = new UserCreateDTO ("5","Patrick","Patrick@itu.dk");
+        var (response , userId) = await _repository.CreateAsync(expected);
+        
+        var (findResponse, entity) = await _repository.FindAsync(userId);
+
+        Assert.Equal(MiniTwit.Shared.Response.Created, response);
+        Assert.Equal(entity.Id, userId);
+
+        var deletedResponse = _repository.DeleteAsync(userId);
+        Assert.Equal(MiniTwit.Shared.Response.Deleted, deletedResponse.Result);
+
+    }
+
+    [Fact]
+    public async Task DeleteAsync_NotFound()
+    {
+        var deletedResponse = await _repository.DeleteAsync("42");
+        Assert.Equal(MiniTwit.Shared.Response.NotFound, deletedResponse);
+
     }
 
     public async ValueTask DisposeAsync()
