@@ -147,7 +147,7 @@ public class UserRepository : IUserRepository
 
         foreach (var m in entity.Messages)
         {
-            messages.Add(new MessageDTO { Text = m.Text, PubDate = m.PubDate, AuthorName = m.Author.UserName});
+            messages.Add(new MessageDTO { Text = m.Text, PubDate = m.PubDate, AuthorName = m.Author.UserName });
         }
 
         return messages;
