@@ -5,8 +5,8 @@ using MiniTwit.Shared.DTO;
 
 public interface IUserRepository
 {
-    Task<(Response Response, string UserId)> CreateAsync(UserCreateDTO user);
-    Task<UserDTO> FindAsync(string userId);
+    Task<(Response Response, string userId)> CreateAsync(UserCreateDTO user);
+    Task<(Response Response, UserDTO)> FindAsync(string userId);
     Task<Response> UpdateAsync(UserUpdateDTO user);
     Task<List<UserDTO>> ReadFollowsAsync(string Id);
     Task<Response> UnFollow(string Id_own, string Id_target);
