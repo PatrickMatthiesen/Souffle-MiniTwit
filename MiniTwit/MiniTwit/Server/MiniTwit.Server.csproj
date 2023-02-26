@@ -8,7 +8,6 @@
     <EnableSdkContainerSupport>true</EnableSdkContainerSupport>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
-	<PublishProfile>DefaultContainer</PublishProfile>
 	<SelfContained>false</SelfContained>
     <ContainerRuntimeIdentifier>linux-x64</ContainerRuntimeIdentifier>
   </PropertyGroup>
@@ -18,10 +17,9 @@
 		<ContainerEnvironmentVariable Include="ConnectionStrings:MiniTwit-db">
 			<Value>Server=localhost;Database=MiniTwit-db;User Id=sa;Password=a282f131-5323-419c-9c8e-55535d486550;MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=True</Value>
 		</ContainerEnvironmentVariable>
-		<ContainerPort Include="5000" Type="tcp" />
-		<ContainerPort Include="5001" Type="tcp" />
+		<ContainerPort Include="80" Type="tcp" />
+		<ContainerPort Include="443" Type="tcp" />
 		<ContainerEnvironmentVariable Include="ASPNETCORE_URLS" Value="http://localhost:5000;https://localhost:5001" />
-		<ContainerEnvironmentVariable Include="ASPNETCORE_HTTPS_PORT" Value="5001" />
 		<ContainerEnvironmentVariable Include="ASPNETCORE_ENVIRONMENT" Value="Development" />
 	</ItemGroup>
 
