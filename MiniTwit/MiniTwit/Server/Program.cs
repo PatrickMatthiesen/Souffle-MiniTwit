@@ -2,17 +2,15 @@ using Infrastructure.Data;
 using Infrastructure.Models;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using MiniTwit.Shared.IRepositories;
-using System.Collections;
 
 var builder = WebApplication.CreateBuilder(args);
 
-foreach (DictionaryEntry e in Environment.GetEnvironmentVariables()) {
-    Console.WriteLine(e.Key + ":" + e.Value);
-}
+//foreach (DictionaryEntry e in Environment.GetEnvironmentVariables()) {
+//    Console.WriteLine(e.Key + ":" + e.Value);
+//}
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("MiniTwit-db") ?? throw new InvalidOperationException("Connection string 'MiniTwit-db' not found.");
@@ -25,13 +23,11 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddIdentityServer(x => x.IssuerUri = "https://localhost:5000")
+builder.Services.AddIdentityServer()
     .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
-//.AddDeveloperSigningCredential(); // TODO: Remove this in production
 
 builder.Services.AddAuthentication()
     .AddIdentityServerJwt();
-    //.AddCookie();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
