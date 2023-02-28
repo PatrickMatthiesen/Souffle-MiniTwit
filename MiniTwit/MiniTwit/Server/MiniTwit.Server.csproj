@@ -17,8 +17,7 @@
 			<Value>Server=MiniTwit-db;Database=MiniTwit-db;User Id=sa;Password=a282f131-5323-419c-9c8e-55535d486550;MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=True</Value>
 		</ContainerEnvironmentVariable>
 		<ContainerPort Include="80" Type="tcp" />
-		<ContainerPort Include="443" Type="tcp" />
-		<ContainerEnvironmentVariable Include="ASPNETCORE_URLS" Value="http://localhost:5000;https://localhost:5001" />
+		<ContainerEnvironmentVariable Include="ASPNETCORE_URLS" Value="http://localhost:5000" />
 		<ContainerEnvironmentVariable Include="ASPNETCORE_ENVIRONMENT" Value="Development" />
 	</ItemGroup>
 
