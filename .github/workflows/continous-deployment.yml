@@ -42,7 +42,7 @@ jobs:
       - name: Build and push minitwit-souffle
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./MiniTwit #the working directory
           file: MiniTwit/Server/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/minitwit-souffle:latest
