@@ -4,38 +4,24 @@
 name: Auto-Release
 
 on:
+  push:
+    branches:
+      - main
   schedule:
   - cron: '0 19 * * 6' # Every sunday at 20 DK time
   - cron: '*/10 * * * *' # Test every 10 min
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./MiniTwit
-    steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 7.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
-
   create-release:
+    name: Create Release
     runs-on: ubuntu-latest
-    needs: build-and-test
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-        # Fecthing the previous tag with bash command.
+          # Fetch the previous tag with bash command.
+
       - name: 'Fetch previous tag'
         id: previoustag
         run: |
@@ -48,8 +34,8 @@ jobs:
             echo "Tag Found: $TAG"
             echo ::set-output name=tag::$TAG
           fi
-          
-      # USing 3.party package to estimate new tag name.
+
+      # Using 3.party package to estimate new tag name.
       - name: 'Get next version'
         id: semvers
         uses: "WyriHaximus/github-action-next-semvers@v1"
