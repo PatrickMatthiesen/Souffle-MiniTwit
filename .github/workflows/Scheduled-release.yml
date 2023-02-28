@@ -1,0 +1,26 @@
+#This workflow is build for a scheduled release every sunday.
+
+name: New Release on Sundays
+on:
+	schedule:
+	# - cron: 0 19 * * 6 Sunday at 20 our time
+  - cron: 0 11 * * 1 
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: New weekly Release
+          draft: false
+          prerelease: false
