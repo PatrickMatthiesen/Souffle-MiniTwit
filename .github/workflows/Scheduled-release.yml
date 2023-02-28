@@ -1,0 +1,45 @@
+#This workflow is build for a scheduled release every sunday.
+
+name: New Release on Sundays
+on:
+	schedule:
+	# - cron: 0 19 * * 6 Sunday at 20 our time
+  - cron: 0 11 * * 1 
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./MiniTwit
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: New weekly Release
+          draft: false
+          prerelease: false
