@@ -4,12 +4,11 @@
 name: Auto-Release
 
 on:
-  push:
-    branches:
-      - main
   schedule:
   - cron: '0 19 * * 6' # Every sunday at 20 DK time
   - cron: '*/10 * * * *' # Test every 10 min
+
+permissions: read-all
 
 jobs:
   create-release:
@@ -20,8 +19,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          # Fetch the previous tag with bash command.
-
+        
+      # Fetch the previous tag with bash command.
       - name: 'Fetch previous tag'
         id: previoustag
         run: |
