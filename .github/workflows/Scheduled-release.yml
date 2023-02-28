@@ -1,11 +1,12 @@
-#This workflow is build for a scheduled release every sunday.
+# This workflow is build for a scheduled release every sunday.
+# Uses a 3.party package to acquire old tags and create new ones for the release.
 
 name: Auto-Release
 
 on:
   schedule:
   - cron: '0 19 * * 6' # Every sunday at 20 DK time
-  # - cron: '*/10 * * * *' # Test every 10 min
+  - cron: '*/10 * * * *' # Test every 10 min
 
 jobs:
   build-and-test:
@@ -32,15 +33,62 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+        # Fecthing the previous tag with bash command.
+      - name: 'Fetch previous tag'
+        id: previoustag
+        run: |
+          git fetch -t -f
+          TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          if [ -z "$TAG" ]
+          then
+            exit 1
+          else
+            echo "Tag Found: $TAG"
+            echo ::set-output name=tag::$TAG
+          fi
+          
+      # USing 3.party package to estimate new tag name.
+      - name: 'Get next version'
+        id: semvers
+        uses: "WyriHaximus/github-action-next-semvers@v1"
+        with:
+          version: ${{ steps.previoustag.outputs.tag }}
 
-      - name: Create Release
+      - name: Generate changelog
+        id: changelog
+        uses: metcalfc/changelog-generator@v3.0.0
+        with:
+          myToken: ${{ secrets.GITHUB_TOKEN }}
+
+      # Creating a minor release 
+      - name: Create Minor Release
+        if: ${{ github.event_name == 'push'}}
+        id: create_minor_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.semvers.outputs.minor }}
+          release_name: Release ${{ steps.semvers.outputs.minor }}
+          body: |
+            Minor release
+            ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
+
+      # Creating the major release
+      - name: Create Major Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: New weekly Release
+          tag_name: v${{ steps.semvers.outputs.major }}
+          release_name: Release ${{ steps.semvers.outputs.major }}
+          body: |
+            Major release
+            ${{ steps.changelog.outputs.changelog }}
           draft: false
           prerelease: false
