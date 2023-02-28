@@ -33,9 +33,7 @@ public class SimRepository : ISimRepository
 
     public async Task<Response> RegisterUser(SimUserDTO user)
     {
-
-        var entity = await _context.Users.FindAsync(user.userName);
-        Response response;
+        var entity = await _context.Users.FindAsync(user.userName); 
 
         if (entity is null)
         {
@@ -50,21 +48,16 @@ public class SimRepository : ISimRepository
             await _context.AddAsync(entity);
             await _context.SaveChangesAsync();
 
-            response = Response.Created;
+            return Response.NoContent;
         }
-            else
-        {
-            response = Response.Conflict;
-        }
-        return response;
-
+        
+        return Response.Conflict;
             
         // await _userManager.CreateAsync(new ApplicationUser 
         // {
         //     UserName = user.Name,
         //     Email = user.Email,
         // });
-
     }
 
     
@@ -95,40 +88,59 @@ public class SimRepository : ISimRepository
         throw new NotImplementedException();
     }
 
-    public Task<Response> CreateMessage(string username, SimMessageDTO newMessage, int? latestMessage)
+    public async Task<Response> CreateMessage(string userName, SimMessageDTO newMessage, int? latestMessage)
     {
-        throw new NotImplementedException();
+        var author = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userName);
+
+        var createdMessage = await _context.Messages.AddAsync(new Message
+        {
+            Text = newMessage.content,
+            PubDate = DateTime.Now,
+            Author = author,
+            Flagged = 0 //TODO
+        });
+
+        await _context.SaveChangesAsync();
+        return Response.NoContent;
     }
 
-    public Task<List<UserDTO>> GetFollows()
+    public async Task<List<UserDTO>> GetFollows(string username)
     {
-        throw new NotImplementedException();
-    }
+        var entity = await _context.Users.FirstOrDefaultAsync(u => u.UserName == username);
 
-    public Task<Response> CreateFollower()
-    {
-        throw new NotImplementedException();
+        var returnList = new List<UserDTO>();
+
+        foreach (var f in entity.Follows)
+        {
+            returnList.Add(new UserDTO(f.Id, f.UserName, f.Email));
+        }
+
+        return returnList;
     }
-    
-    public async Task<Response> Follow(string username, string Id_Target)
+   
+
+    public async Task<Response> CreateFollower(string username, string Id_Target)
     {
         var entity = await _context.Users.FindAsync(username);
 
-        var target = _context.Users.FindAsync(Id_Target);
+        var target = _context.Users.FirstOrDefaultAsync(u => u.Id == Id_Target);
         var targetUser = target.Result;
 
-        Response response;
-
-        if (entity.Follows.Contains(targetUser))
+        if( _context.Users.FindAsync(Id_Target) == null)
         {
-            response = Response.Conflict;
+            return Response.NotFound;
         }
+        
+
+        // if (entity.Follows.Contains(targetUser))
+        // {
+        //     return Response.Conflict;
+        // }
             else
         {
-            entity.Follows.Add(targetUser);
-            await _context.SaveChangesAsync();
-            response = Response.OK;
+            entity.Follows.Add(targetUser);  //debugging showed error happends here
+            await _context.SaveChangesAsync(); //or here
+            return Response.NoContent;
         }
-        return response;
     }
 }

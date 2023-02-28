@@ -37,7 +37,7 @@ public class SimController : ControllerBase
         [FromBody] SimUserDTO user, 
         [FromQuery(Name = "latest")]
          int? latestMessage)
-    {
+    {   
         return (await _simRepository.RegisterUser(user)).ToActionResult();
     }
 
@@ -61,8 +61,9 @@ public class SimController : ControllerBase
         [FromQuery(Name = "latest")] 
         int? latestMessage
         )
-    {
-        throw new NotImplementedException();
+    {   
+        var entity = new CreateMessageDTO {Text = newMessage.content};
+        return (await _simRepository.CreateMessage(username,newMessage,latestMessage)).ToActionResult();
     }
 
     [HttpGet("fllws/{username}")]
@@ -71,16 +72,18 @@ public class SimController : ControllerBase
         return await _userRepository.ReadFollowsAsync(username);
     }
 
+
     [HttpPost("fllws/{username}")]
-    public async Task<IActionResult> CreateFollower(string username, [FromBody] FollowsDTO body)
+    public async Task<IActionResult> CreateFollower(string username,[FromBody] FollowsDTO body) 
     {
-        if (body.follow is null)
+        if (body.follow is not null) 
         {
+            return (await _simRepository.CreateFollower(username, body.follow)).ToActionResult();
+        } else if (body.unfollow is not null) {
             return null;
         } else {
-            return (await _simRepository.Follow(username, body.follow)).ToActionResult();
+            return null;
         }
-        
 
     }
 }
