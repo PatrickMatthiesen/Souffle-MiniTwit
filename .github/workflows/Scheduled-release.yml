@@ -5,7 +5,7 @@ name: Auto-Release
 on:
   schedule:
   - cron: '0 19 * * 6' # Every sunday at 20 DK time
-  - cron: '*/10 * * * *' # Test every 10 min
+  # - cron: '*/10 * * * *' # Test every 10 min
 
 jobs:
   build-and-test:
@@ -39,6 +39,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         with:
+          tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body: New weekly Release
           draft: false
