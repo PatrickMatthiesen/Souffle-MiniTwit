@@ -1,4 +1,6 @@
 using Infrastructure.Data;
+using Infrastructure.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MiniTwit.Shared;
 using MiniTwit.Shared.DTO;
@@ -9,12 +11,75 @@ namespace Infrastructure.Repositories;
 public class SimRepository : ISimRepository
 {
     private readonly ApplicationDbContext _context;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public SimRepository(ApplicationDbContext context)
+    public SimRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
+
+    public async Task<LatestDTO> GetAsync()
+    {
+        var entity = await _context.Latests.FirstOrDefaultAsync();
+        
+        if (entity == null)
+        {
+            return new LatestDTO {};
+        }
+
+        return new LatestDTO() { latest = entity.latest };
+    }
+
+    public async Task<Response> RegisterUser(SimUserDTO user)
+    {
+
+        var entity = await _context.Users.FindAsync(user.userName);
+        Response response;
+
+        if (entity is null)
+        {
+            entity = new ApplicationUser
+            {
+                UserName = user.userName,
+                Email = user.email,
+                Messages = new List<Message>(),
+                Follows = new List<ApplicationUser>()
+            };
+
+            await _context.AddAsync(entity);
+            await _context.SaveChangesAsync();
+
+            response = Response.Created;
+        }
+            else
+        {
+            response = Response.Conflict;
+        }
+        return response;
+
+            
+        // await _userManager.CreateAsync(new ApplicationUser 
+        // {
+        //     UserName = user.Name,
+        //     Email = user.Email,
+        // });
+
+    }
+
     
+
+    
+
+    public async Task<Response> UpdateAsync(LatestDTO dto)
+    {
+        var entity = await _context.Latests.FirstOrDefaultAsync();
+        entity.latest = dto.latest;
+        await _context.SaveChangesAsync();
+        return Response.Created;       
+    }
+
+
     public Task<List<MessageDTO>> GetMsgs()
     {
         return _context.Messages.Select(m => new MessageDTO
@@ -58,7 +123,7 @@ public class SimRepository : ISimRepository
         {
             response = Response.Conflict;
         }
-        else
+            else
         {
             entity.Follows.Add(targetUser);
             await _context.SaveChangesAsync();

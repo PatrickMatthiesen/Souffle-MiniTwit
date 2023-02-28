@@ -1,4 +1,5 @@
 using System.Drawing;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiniTwit.Shared.DTO;
 using MiniTwit.Shared.IRepositories;
@@ -6,6 +7,7 @@ using MiniTwit.Shared.Util;
 
 namespace MiniTwit.Server.Controllers;
 
+[AllowAnonymous]
 [Route("api/[controller]")]
 [ApiController]
 public class SimController : ControllerBase
@@ -14,13 +16,32 @@ public class SimController : ControllerBase
     private readonly IUserRepository _userRepository;
     private readonly ISimRepository _simRepository;
     
+
+     public SimController(ISimRepository simRepository, IUserRepository userRepository,  IMessageRepository messageRepository)
+    {
+        _simRepository = simRepository;
+        _userRepository = userRepository;
+        _messageRepository = messageRepository;
+
+    }
+
     [HttpGet("latest")]
-    public async Task<ActionResult<MessageController>> GetLatest()
+    public async Task<ActionResult<LatestDTO>> GetLatest()
     // Possibly return a LatestDTO. Definitely not a MessageController, just a placeholder.
     {
-        throw new NotImplementedException();
+        return await _simRepository.GetAsync();
     }
     
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(
+        [FromBody] SimUserDTO user, 
+        [FromQuery(Name = "latest")]
+         int? latestMessage)
+    {
+        return (await _simRepository.RegisterUser(user)).ToActionResult();
+    }
+
+
     [HttpGet("msgs")]
     public async Task<ActionResult<List<MessageDTO>>> GetMsgs()
     {
@@ -51,9 +72,15 @@ public class SimController : ControllerBase
     }
 
     [HttpPost("fllws/{username}")]
-    public async Task<IActionResult> CreateFollower(string username, [FromBody] FollowDTO FOllowDTO)
+    public async Task<IActionResult> CreateFollower(string username, [FromBody] FollowsDTO body)
     {
-        if (userName is null)
-        return await _simRepository.Follow(username, targetID);
+        if (body.follow is null)
+        {
+            return null;
+        } else {
+            return (await _simRepository.Follow(username, body.follow)).ToActionResult();
+        }
+        
+
     }
 }
