@@ -1,10 +1,11 @@
 #This workflow is build for a scheduled release every sunday.
 
-name: New Release on Sundays
+name: Auto-Release
+
 on:
 	schedule:
-	# - cron: 0 19 * * 6 Sunday at 20 our time
-  - cron: 0 11 * * 1 
+	- cron: '0 19 * * 6' # Every sunday at 20 DK time
+  - cron: '*/5 * * * *' # Test every 5 min
 
 jobs:
   build-and-test:
