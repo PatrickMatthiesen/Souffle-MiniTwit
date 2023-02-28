@@ -104,7 +104,7 @@ public class UserRepository : IUserRepository
         return response;
     }
 
-      public async Task<Response> UnFollow(string Id_Own, string Id_Target)
+    public async Task<Response> UnFollow(string Id_Own, string Id_Target)
     {
         var entity = await _context.Users.FindAsync(Id_Own);
 

@@ -1,0 +1,77 @@
+---
+name: Continuous Deployment
+
+on:
+  push:
+    # Run workflow every time something is pushed to the main branch
+    branches:
+      - main
+      - master
+  # allow manual triggers for now too
+  workflow_dispatch:
+    manual: true
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./MiniTwit
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+        
+      - name: Build and push minitwit-souffle
+        uses: docker/build-push-action@v2
+        with:
+          context: ./MiniTwit
+          file: MiniTwit/MiniTwit/Server/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/minitwit-souffle:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/minitwit-souffle:webbuildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/minitwit-souffle:webbuildcache,mode=max
+
+      - name: Build and push minitwit-db
+        uses: docker/build-push-action@v2
+        with:
+          context: ./MiniTwit
+          file: MiniTwit/MiniTwit/Server/Dockerfile.database
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/minitwit-db:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/minitwit-db:mysqlbuildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/minitwit-db:mysqlbuildcache,mode=max
+
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/minitwit.key
+          chmod 600 ~/.ssh/minitwit.key
+        env:
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+
+      - name: Deploy on server
+        # Configure the ~./bash_profile and deploy.sh file on the Vagrantfile
+        run: >
+          ssh $SSH_USER@$SSH_HOST
+          -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
+          "docker stop minitwit-souffle &&
+          docker rm minitwit-souffle &&
+          docker pull $DOCKER_USERNAME/minitwit-souffle:latest &&
+          docker run -d --name minitwit-souffle --network minitwit-net -p 5000:80 $DOCKER_USERNAME/minitwit-souffle:latest"
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
