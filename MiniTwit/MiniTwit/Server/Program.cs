@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using MiniTwit.Shared.IRepositories;
+using MiniTwit.Infrastructure.Repositories;
+using System.Collections;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("MiniTwit-db") ?? throw new InvalidOperationException("Connection string 'MiniTwit-db' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString, 
+    options.UseSqlServer(connectionString,
         providerOptions => providerOptions.EnableRetryOnFailure()));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -40,6 +42,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 

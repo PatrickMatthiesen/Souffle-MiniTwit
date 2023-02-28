@@ -1,0 +1,61 @@
+# This workflow is build for a scheduled release every sunday.
+# Uses a 3.party package to acquire old tags and create new ones for the release.
+
+name: Auto-Release
+
+on:
+  schedule:
+  - cron: '0 19 * * 6' # Every sunday at 20 DK time
+  # - cron: '*/5 * * * *' # Test every 5 min
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+        
+      # Fetch the previous tag with bash command.
+      - name: 'Fetch previous tag'
+        id: previoustag
+        run: |
+          git fetch -t -f
+          TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          if [ -z "$TAG" ]
+          then
+            exit 1
+          else
+            echo "Tag Found: $TAG"
+            echo ::set-output name=tag::$TAG
+          fi
+
+      # Using 3.party package to estimate new tag name.
+      - name: 'Get next version'
+        id: semvers
+        uses: "WyriHaximus/github-action-next-semvers@v1"
+        with:
+          version: ${{ steps.previoustag.outputs.tag }}
+
+      - name: Generate changelog
+        id: changelog
+        uses: metcalfc/changelog-generator@v3.0.0
+        with:
+          myToken: ${{ secrets.RELEASE_TOKEN }}
+
+      # Creating the New Release
+      - name: Create New Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }} 
+        with:
+          tag_name: v${{ steps.semvers.outputs.patch }}
+          release_name: Release ${{ steps.semvers.outputs.patch }}
+          body: |
+            New Release
+            ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
