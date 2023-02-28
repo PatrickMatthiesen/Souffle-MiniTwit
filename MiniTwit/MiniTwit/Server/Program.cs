@@ -43,6 +43,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ISimRepository, SimRepository>();
 
 var app = builder.Build();
 
@@ -62,7 +63,6 @@ else
     app.UseHsts();
 }
 
-//app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();

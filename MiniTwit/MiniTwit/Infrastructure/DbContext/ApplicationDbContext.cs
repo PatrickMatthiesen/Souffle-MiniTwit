@@ -14,6 +14,7 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
 
     public DbSet<Message> Messages => Set<Message>();
     public DbSet<ApplicationUser> Users => Set<ApplicationUser>();
+    public DbSet<Latest> Latests => Set<Latest>();
     
     public ApplicationDbContext(
         DbContextOptions options,
