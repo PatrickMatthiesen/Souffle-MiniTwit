@@ -21,3 +21,14 @@
     > ```dotnet publish .\MiniTwit\Server\ --os linux --arch x64 -c Release -p:PublishProfile=DefaultContainer --no-self-contained```
 4. Run the container
     > ```dotnet run -it --rm minitwit-server:1.0.0```
+
+## Deploying database
+
+> This currently requires a person to do something, but would be updated to run from a script, how to do it using actions is unclear.
+
+1. Make a droplet with docker support
+2. SSH to the droplet and run
+   `docker run --name MiniTwit-db -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=<our strong password>" -p 1433:1433 -d mcr.microsoft.com/azure-sql-edge:latest`
+3. Update the database with the dbcontext, by having the connection string to the database in user secrets and running
+    `dotnet ef database update -p ./MiniTwit/Server/`
+    > this should be changed.

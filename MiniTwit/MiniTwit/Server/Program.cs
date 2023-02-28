@@ -2,7 +2,6 @@ using Infrastructure.Data;
 using Infrastructure.Models;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using MiniTwit.Shared.IRepositories;
@@ -11,8 +10,7 @@ using System.Collections;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//foreach (DictionaryEntry e in Environment.GetEnvironmentVariables())
-//{
+//foreach (DictionaryEntry e in Environment.GetEnvironmentVariables()) {
 //    Console.WriteLine(e.Key + ":" + e.Value);
 //}
 
@@ -31,8 +29,7 @@ builder.Services.AddIdentityServer()
     .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
 builder.Services.AddAuthentication()
-    .AddIdentityServerJwt()
-    .AddCookie();
+    .AddIdentityServerJwt();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -65,13 +62,14 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
 app.UseIdentityServer();
 app.UseAuthorization();
 

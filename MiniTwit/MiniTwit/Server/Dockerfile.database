@@ -1,0 +1,5 @@
+FROM mcr.microsoft.com/azure-sql-edge:latest
+EXPOSE 1433
+
+ENV ACCEPT_EULA=Y
+ENV SA_PASSWORD=a282f131-5323-419c-9c8e-55535d486550
