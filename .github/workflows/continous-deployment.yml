@@ -48,9 +48,9 @@ jobs:
           context: ./MiniTwit
           file: MiniTwit/MiniTwit/Server/Dockerfile.database
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/MiniTwit-DB:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/MiniTwit-DB:mysqlbuildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/MiniTwit-DB:mysqlbuildcache,mode=max
+          tags: ${{ secrets.DOCKER_USERNAME }}/minitwit-db:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwit-db:mysqlbuildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwit-db:mysqlbuildcache,mode=max
 
       - name: Configure SSH
         run: |
