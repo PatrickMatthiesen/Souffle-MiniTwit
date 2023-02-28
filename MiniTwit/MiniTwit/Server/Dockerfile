@@ -14,8 +14,6 @@ COPY ["MiniTwit/Infrastructure/Infrastructure.csproj", "MiniTwit/Infrastructure/
 RUN dotnet restore "MiniTwit/Server/MiniTwit.Server.csproj"
 COPY . .
 WORKDIR "/src/MiniTwit/Server"
-ENV ASPNETCORE_ENVIRONMENT Development
-ENV MiniTwit-db "Server=164.90.231.93;Database=MiniTwit-db;User Id=sa;Password=a282f131-5323-419c-9c8e-55535d486550;MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=True"
 
 RUN dotnet build "MiniTwit.Server.csproj" -c Release -o /app/build
 
@@ -25,4 +23,5 @@ RUN dotnet publish "MiniTwit.Server.csproj" -c Release -o /app/publish /p:UseApp
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV ASPNETCORE_ENVIRONMENT=Development
 ENTRYPOINT ["dotnet", "MiniTwit.Server.dll"]
