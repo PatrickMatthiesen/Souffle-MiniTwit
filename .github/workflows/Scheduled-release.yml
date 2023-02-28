@@ -3,8 +3,8 @@
 name: Auto-Release
 
 on:
-	schedule:
-	- cron: '0 19 * * 6' # Every sunday at 20 DK time
+  schedule:
+  - cron: '0 19 * * 6' # Every sunday at 20 DK time
   - cron: '*/5 * * * *' # Test every 5 min
 
 jobs:
