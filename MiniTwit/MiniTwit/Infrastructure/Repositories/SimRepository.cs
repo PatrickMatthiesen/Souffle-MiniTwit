@@ -84,7 +84,11 @@ public class SimRepository : ISimRepository {
     }
 
     public async Task<Response> CreateMessage(string userName, SimMessageDTO newMessage, int? latestMessage) {
-        var author = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userName);
+        var author = await _context.Users.Include("Messages").FirstOrDefaultAsync(u => u.UserName == userName);
+
+        if (author == null) {
+            return Response.NotFound;
+        }
 
         author.Messages.Add(new Message {
             Text = newMessage.content,
@@ -93,7 +97,7 @@ public class SimRepository : ISimRepository {
             Flagged = 0 //TODO
         });
 
-        UpdateLatest(latestMessage);
+        await UpdateLatest(latestMessage);
 
         await _context.SaveChangesAsync();
         return Response.NoContent;
@@ -113,28 +117,24 @@ public class SimRepository : ISimRepository {
 
 
     public async Task<Response> CreateFollower(string username, string Id_Target) {
-        var entity = await _context.Users.FindAsync(username);
+        var entity = await _context.Users.Include("Follows").FirstOrDefaultAsync(u => u.UserName == username);
 
-        var target = _context.Users.FirstOrDefaultAsync(u => u.Id == Id_Target);
-        var targetUser = target.Result;
-
-        if (_context.Users.FindAsync(Id_Target) == null) {
+        if (entity == null) {
             return Response.NotFound;
         }
 
+        var toFollow = await _context.Users.FirstOrDefaultAsync(u => u.UserName == Id_Target);
 
-        // if (entity.Follows.Contains(targetUser))
-        // {
-        //     return Response.Conflict;
-        // }
-        else {
-            entity.Follows.Add(targetUser);  //debugging showed error happends here
-            await _context.SaveChangesAsync(); //or here
-            return Response.NoContent;
+        if (toFollow == null) {
+            return Response.NotFound;
         }
+
+        entity.Follows.Add(toFollow);  //debugging showed error happends here
+        await _context.SaveChangesAsync(); //or here
+        return Response.NoContent;
     }
 
-    private async void UpdateLatest(int? latest) {
+    private async Task UpdateLatest(int? latest) {
         if (latest is null) return;
 
         var entity = await _context.Latests.FirstOrDefaultAsync();
