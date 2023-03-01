@@ -3,8 +3,7 @@ namespace MiniTwit.Shared.IRepositories;
 using MiniTwit.Shared.DTO;
 
 
-public interface IUserRepository
-{
+public interface IUserRepository {
     Task<(Response Response, string userId)> CreateAsync(UserCreateDTO user);
     Task<(Response Response, UserDTO)> FindAsync(string userId);
     Task<Response> UpdateAsync(UserUpdateDTO user);

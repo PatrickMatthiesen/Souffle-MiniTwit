@@ -2,14 +2,11 @@
 
 #nullable disable
 
-namespace Infrastructure.Migrations
-{
+namespace Infrastructure.Migrations {
     /// <inheritdoc />
-    public partial class RemoveLatestId : Migration
-    {
+    public partial class RemoveLatestId : Migration {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
+        protected override void Up(MigrationBuilder migrationBuilder) {
             migrationBuilder.DropPrimaryKey(
                 name: "PK_Latests",
                 table: "Latests");
@@ -33,8 +30,7 @@ namespace Infrastructure.Migrations
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+        protected override void Down(MigrationBuilder migrationBuilder) {
             migrationBuilder.DropPrimaryKey(
                 name: "PK_Latests",
                 table: "Latests");

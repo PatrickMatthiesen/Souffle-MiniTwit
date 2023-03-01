@@ -1,7 +1,6 @@
 namespace MiniTwit.Shared;
 
-public enum Response
-{
+public enum Response {
     Created,
     Updated,
     Deleted,

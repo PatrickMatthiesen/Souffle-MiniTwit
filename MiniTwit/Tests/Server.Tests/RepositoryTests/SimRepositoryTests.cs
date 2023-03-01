@@ -1,6 +1,7 @@
 ﻿using Duende.IdentityServer.EntityFramework.Options;
-using Infrastructure.Repositories;
 using Microsoft.Extensions.Options;
+using MiniTwit.Infrastructure.DbContext;
+using MiniTwit.Infrastructure.Repositories;
 using MiniTwit.Shared;
 using MiniTwit.Shared.DTO;
 
@@ -49,7 +50,7 @@ public sealed class SimRepositoryTests : IAsyncDisposable {
         Assert.Equal(expected, response);
 
         var latest = await _repository.GetAsync();
-        
+
         Assert.Equal(1, latest.latest);
     }
 
