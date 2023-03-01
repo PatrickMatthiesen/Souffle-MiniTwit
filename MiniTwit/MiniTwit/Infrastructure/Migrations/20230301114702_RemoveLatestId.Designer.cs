@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230301112116_LatestIdToInt")]
-    partial class LatestIdToInt
+    [Migration("20230301114702_RemoveLatestId")]
+    partial class RemoveLatestId
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -238,16 +238,16 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Infrastructure.Models.Latest", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("IdDub")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdDub"));
 
                     b.Property<int>("latest")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("IdDub");
 
                     b.ToTable("Latests");
                 });

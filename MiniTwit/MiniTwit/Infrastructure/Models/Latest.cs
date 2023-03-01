@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Infrastructure.Models;
 
 public class Latest {
