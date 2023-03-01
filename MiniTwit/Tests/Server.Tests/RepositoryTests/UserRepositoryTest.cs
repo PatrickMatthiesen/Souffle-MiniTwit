@@ -1,7 +1,7 @@
 namespace Server.Tests.RepositoryTests;
 
 using Duende.IdentityServer.EntityFramework.Options;
-using Infrastructure.Models;
+using MiniTwit.Infrastructure.Models;
 using Microsoft.Extensions.Options;
 using MiniTwit.Infrastructure.DbContext;
 using MiniTwit.Infrastructure.Repositories;

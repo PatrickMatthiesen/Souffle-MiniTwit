@@ -1,4 +1,4 @@
-﻿using Infrastructure.Models;
+﻿using MiniTwit.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 using MiniTwit.Infrastructure.DbContext;
 using MiniTwit.Shared;
