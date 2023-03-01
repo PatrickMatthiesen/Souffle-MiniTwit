@@ -1,12 +1,10 @@
-using Infrastructure.Data;
-using Infrastructure.Models;
-using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using MiniTwit.Shared.IRepositories;
+using MiniTwit.Infrastructure.DbContext;
+using MiniTwit.Infrastructure.Models;
 using MiniTwit.Infrastructure.Repositories;
-using System.Collections;
+using MiniTwit.Shared.IRepositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,8 +33,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
+builder.Services.AddSwaggerGen(c => {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "SourceTracking.Server", Version = "v1" });
     c.UseInlineDefinitionsForEnums();
 });
@@ -48,16 +45,14 @@ builder.Services.AddScoped<ISimRepository, SimRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
     app.UseSwaggerUI();
 
     app.UseMigrationsEndPoint();
     app.UseWebAssemblyDebugging();
 }
-else
-{
+else {
     app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();

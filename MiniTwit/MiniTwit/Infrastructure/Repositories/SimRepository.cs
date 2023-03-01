@@ -1,14 +1,11 @@
-using Duende.IdentityServer.Validation;
-using Infrastructure.Data;
-using Infrastructure.Migrations;
-using Infrastructure.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MiniTwit.Infrastructure.DbContext;
+using MiniTwit.Infrastructure.Models;
 using MiniTwit.Shared;
 using MiniTwit.Shared.DTO;
 using MiniTwit.Shared.IRepositories;
 
-namespace Infrastructure.Repositories;
+namespace MiniTwit.Infrastructure.Repositories;
 
 public class SimRepository : ISimRepository {
     private readonly ApplicationDbContext _context;
@@ -138,8 +135,7 @@ public class SimRepository : ISimRepository {
         if (latest is null) return;
 
         var entity = await _context.Latests.FirstOrDefaultAsync();
-        if (entity is null)
-        {
+        if (entity is null) {
             await _context.Latests.AddAsync(new Latest { latest = latest ?? 0 });
             return;
         }

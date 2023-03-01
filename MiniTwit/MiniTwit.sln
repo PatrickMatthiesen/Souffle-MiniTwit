@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniTwit.Client", "MiniTwit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniTwit.Shared", "MiniTwit\Shared\MiniTwit.Shared.csproj", "{13D3B28B-6915-4610-A09E-69AB8450D89C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "MiniTwit\Infrastructure\Infrastructure.csproj", "{EE266498-29DE-481B-BB11-5834A576D09C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniTwit.Infrastructure", "MiniTwit\Infrastructure\MiniTwit.Infrastructure.csproj", "{EE266498-29DE-481B-BB11-5834A576D09C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{21E56AEA-B0B1-4006-861C-370EEF085CD1}"
 EndProject

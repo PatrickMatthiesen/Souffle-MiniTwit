@@ -10,7 +10,7 @@ WORKDIR /src
 COPY ["MiniTwit/Server/MiniTwit.Server.csproj", "MiniTwit/Server/"]
 COPY ["MiniTwit/Client/MiniTwit.Client.csproj", "MiniTwit/Client/"]
 COPY ["MiniTwit/Shared/MiniTwit.Shared.csproj", "MiniTwit/Shared/"]
-COPY ["MiniTwit/Infrastructure/Infrastructure.csproj", "MiniTwit/Infrastructure/"]
+COPY ["MiniTwit/Infrastructure/MiniTwit.Infrastructure.csproj", "MiniTwit/Infrastructure/"]
 RUN dotnet restore "MiniTwit/Server/MiniTwit.Server.csproj"
 COPY . .
 WORKDIR "/src/MiniTwit/Server"
