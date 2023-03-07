@@ -14,7 +14,7 @@ public class SimRepository : ISimRepository {
         _context = context;
     }
 
-    public async Task<LatestDTO> GetAsync() {
+    public async Task<LatestDTO> GetLatestAsync() {
         var entity = await _context.Latests.FirstOrDefaultAsync();
 
         if (entity == null) {
@@ -113,7 +113,7 @@ public class SimRepository : ISimRepository {
     }
 
 
-    public async Task<Response> CreateOrRemoveFollower(string username, string Id_Target, bool follow) {
+    public async Task<Response> CreateOrRemoveFollower(string username, string Id_Target, bool follow = true) {
         var entity = await _context.Users.Include("Follows").FirstOrDefaultAsync(u => u.UserName == username);
 
         if (entity == null) {

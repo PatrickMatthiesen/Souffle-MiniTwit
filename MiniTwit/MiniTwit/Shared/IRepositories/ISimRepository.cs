@@ -13,11 +13,11 @@ public interface ISimRepository {
 
 
 
-    public Task<LatestDTO> GetAsync();
+    public Task<LatestDTO> GetLatestAsync();
     public Task<Response> UpdateAsync(LatestDTO dto);
 
 
 
     // Translated from other repositories, massive code duplication;
-    Task<Response> CreateOrRemoveFollower(string Id_own, string Id_target, bool follow);
+    Task<Response> CreateOrRemoveFollower(string Id_own, string Id_target, bool follow = true);
 }

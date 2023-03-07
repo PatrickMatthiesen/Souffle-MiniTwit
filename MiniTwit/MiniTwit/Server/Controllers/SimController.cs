@@ -24,9 +24,8 @@ public class SimController : ControllerBase {
 
     [HttpGet("latest")]
     public async Task<ActionResult<LatestDTO>> GetLatest()
-    // Possibly return a LatestDTO. Definitely not a MessageController, just a placeholder.
     {
-        return await _simRepository.GetAsync();
+        return await _simRepository.GetLatestAsync();
     }
 
     [HttpPost("register")]
@@ -68,11 +67,11 @@ public class SimController : ControllerBase {
     [HttpPost("fllws/{username}")]
     public async Task<IActionResult> CreateFollower(string username, [FromBody] FollowsDTO body) {
         if (body.follow is not null) {
-            return (await _simRepository.CreateOrRemoveFollower(username, body.follow, true)).ToActionResult();
+            return (await _simRepository.CreateOrRemoveFollower(username, body.follow)).ToActionResult();
         }
         else if (body.unfollow is not null)
         {
-            return (await _simRepository.CreateOrRemoveFollower(username, body.unfollow, false)).ToActionResult();
+            return (await _simRepository.CreateOrRemoveFollower(username, body.unfollow, follow: false)).ToActionResult();
         }
         else {
             return NotFound();
