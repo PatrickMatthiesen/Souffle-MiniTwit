@@ -68,14 +68,17 @@ public class SimController : ControllerBase {
     [HttpPost("fllws/{username}")]
     public async Task<IActionResult> CreateFollower(string username, [FromBody] FollowsDTO body) {
         if (body.follow is not null) {
-            return (await _simRepository.CreateFollower(username, body.follow)).ToActionResult();
+            return (await _simRepository.CreateOrRemoveFollower(username, body.follow, true)).ToActionResult();
         }
-        else if (body.unfollow is not null) {
-            return null;
+        else if (body.unfollow is not null)
+        {
+            return (await _simRepository.CreateOrRemoveFollower(username, body.unfollow, false)).ToActionResult();
         }
         else {
-            return null;
+            return NotFound();
         }
 
     }
 }
+/* 803	115045	1584061614691	follow	    Mellie Yost	    Guadalupe Rumps */
+/* 815	905006	1584079148974	unfollow	Guadalupe Rumps	Blair Reasoner */
