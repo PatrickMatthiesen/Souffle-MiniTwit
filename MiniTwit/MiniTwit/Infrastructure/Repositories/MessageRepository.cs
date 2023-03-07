@@ -20,7 +20,7 @@ public class MessageRepository : IMessageRepository {
             Text = m.Text,
             PubDate = m.PubDate,
             AuthorName = m.Author.UserName
-        }).OrderByDescending(m => m.PubDate).ToListAsync();
+        }).OrderBy(m => m.PubDate).ToListAsync();
     }
 
     public async Task<Option<MessageDTO>> ReadAsync(int id) {

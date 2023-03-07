@@ -30,7 +30,7 @@ public sealed class SimRepositoryTests : IAsyncDisposable {
     [Fact]
     public async Task GetAsync_Succes() {
         var expected = new LatestDTO { latest = 0 };
-        var actual = await _repository.GetAsync();
+        var actual = await _repository.GetLatestAsync();
 
         Assert.Equal(expected, actual);
     }
@@ -39,7 +39,7 @@ public sealed class SimRepositoryTests : IAsyncDisposable {
     public async Task RegisterUser_And_SendMessage_Then_CheckLatest() {
         var user = new SimUserDTO { userName = "Asger" };
         var expected = Response.NoContent;
-        var actual = await _repository.RegisterUser(user);
+        var actual = await _repository.RegisterUser(user, 0);
 
         Assert.Equal(expected, actual);
 
@@ -49,7 +49,7 @@ public sealed class SimRepositoryTests : IAsyncDisposable {
 
         Assert.Equal(expected, response);
 
-        var latest = await _repository.GetAsync();
+        var latest = await _repository.GetLatestAsync();
 
         Assert.Equal(1, latest.latest);
     }
