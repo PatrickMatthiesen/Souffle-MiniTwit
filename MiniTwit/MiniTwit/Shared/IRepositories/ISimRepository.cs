@@ -19,5 +19,5 @@ public interface ISimRepository {
 
 
     // Translated from other repositories, massive code duplication;
-    Task<Response> CreateFollower(string Id_own, string Id_target);
+    Task<Response> CreateOrRemoveFollower(string Id_own, string Id_target, bool follow);
 }

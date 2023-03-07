@@ -113,21 +113,29 @@ public class SimRepository : ISimRepository {
     }
 
 
-    public async Task<Response> CreateFollower(string username, string Id_Target) {
+    public async Task<Response> CreateOrRemoveFollower(string username, string Id_Target, bool follow) {
         var entity = await _context.Users.Include("Follows").FirstOrDefaultAsync(u => u.UserName == username);
 
         if (entity == null) {
             return Response.NotFound;
         }
 
-        var toFollow = await _context.Users.FirstOrDefaultAsync(u => u.UserName == Id_Target);
+        var targetUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == Id_Target);
 
-        if (toFollow == null) {
+        if (targetUser == null) {
             return Response.NotFound;
         }
 
-        entity.Follows.Add(toFollow);  //debugging showed error happends here
-        await _context.SaveChangesAsync(); //or here
+        if (follow)
+        {
+            entity.Follows.Add(targetUser);
+        }
+        else
+        {
+            entity.Follows.Remove(targetUser);
+        }
+        
+        await _context.SaveChangesAsync();
         return Response.NoContent;
     }
 

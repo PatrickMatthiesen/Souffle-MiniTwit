@@ -96,7 +96,7 @@ public class UserRepository : IUserRepository {
 
         Response response;
 
-        if (target is not null) {
+        if (target is not null && entity.Follows.Contains(target)) {
             entity.Follows.Remove(target);
             await _context.SaveChangesAsync();
             response = Response.Updated;
