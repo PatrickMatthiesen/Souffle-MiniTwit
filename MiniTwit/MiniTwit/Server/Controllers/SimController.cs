@@ -33,7 +33,7 @@ public class SimController : ControllerBase {
         [FromBody] SimUserDTO user,
         [FromQuery(Name = "latest")]
          int? latestMessage) {
-        return (await _simRepository.RegisterUser(user)).ToActionResult();
+        return (await _simRepository.RegisterUser(user, latestMessage)).ToActionResult();
     }
 
 
@@ -63,21 +63,17 @@ public class SimController : ControllerBase {
         return await _userRepository.ReadFollowsAsync(username);
     }
 
-
     [HttpPost("fllws/{username}")]
-    public async Task<IActionResult> CreateFollower(string username, [FromBody] FollowsDTO body) {
+    public async Task<IActionResult> CreateFollower(string username, [FromBody] FollowsDTO body, [FromQuery(Name = "latest")] int? latestMessage) {
         if (body.follow is not null) {
-            return (await _simRepository.CreateOrRemoveFollower(username, body.follow)).ToActionResult();
+            return (await _simRepository.CreateOrRemoveFollower(username, body.follow, latestMessage)).ToActionResult();
         }
         else if (body.unfollow is not null)
         {
-            return (await _simRepository.CreateOrRemoveFollower(username, body.unfollow, follow: false)).ToActionResult();
+            return (await _simRepository.CreateOrRemoveFollower(username, body.unfollow, latestMessage, follow: false)).ToActionResult();
         }
         else {
             return NotFound();
         }
-
     }
 }
-/* 803	115045	1584061614691	follow	    Mellie Yost	    Guadalupe Rumps */
-/* 815	905006	1584079148974	unfollow	Guadalupe Rumps	Blair Reasoner */

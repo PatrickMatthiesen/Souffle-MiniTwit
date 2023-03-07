@@ -24,7 +24,7 @@ public class SimRepository : ISimRepository {
         return new LatestDTO() { latest = entity.latest };
     }
 
-    public async Task<Response> RegisterUser(SimUserDTO user) {
+    public async Task<Response> RegisterUser(SimUserDTO user, int? latestMessage) {
         var entity = await _context.Users.FindAsync(user.userName);
 
         if (entity is null) {
@@ -36,18 +36,13 @@ public class SimRepository : ISimRepository {
             };
 
             await _context.AddAsync(entity);
+            await UpdateLatest(latestMessage);
             await _context.SaveChangesAsync();
-
+            
             return Response.NoContent;
         }
 
         return Response.Conflict;
-
-        // await _userManager.CreateAsync(new ApplicationUser 
-        // {
-        //     UserName = user.Name,
-        //     Email = user.Email,
-        // });
     }
 
 
@@ -113,7 +108,7 @@ public class SimRepository : ISimRepository {
     }
 
 
-    public async Task<Response> CreateOrRemoveFollower(string username, string Id_Target, bool follow = true) {
+    public async Task<Response> CreateOrRemoveFollower(string username, string Id_Target, int? latestMessage, bool follow = true) {
         var entity = await _context.Users.Include("Follows").FirstOrDefaultAsync(u => u.UserName == username);
 
         if (entity == null) {
@@ -134,7 +129,8 @@ public class SimRepository : ISimRepository {
         {
             entity.Follows.Remove(targetUser);
         }
-        
+
+        await UpdateLatest(latestMessage);
         await _context.SaveChangesAsync();
         return Response.NoContent;
     }

@@ -9,7 +9,7 @@ public interface ISimRepository {
     public Task<List<UserDTO>> GetFollows(string username);
 
 
-    public Task<Response> RegisterUser(SimUserDTO user);
+    public Task<Response> RegisterUser(SimUserDTO user, int? latestMessage);
 
 
 
@@ -19,5 +19,5 @@ public interface ISimRepository {
 
 
     // Translated from other repositories, massive code duplication;
-    Task<Response> CreateOrRemoveFollower(string Id_own, string Id_target, bool follow = true);
+    Task<Response> CreateOrRemoveFollower(string Id_own, string Id_target, int? latestMessage, bool follow = true);
 }

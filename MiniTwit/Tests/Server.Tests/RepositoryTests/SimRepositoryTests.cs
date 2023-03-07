@@ -39,7 +39,7 @@ public sealed class SimRepositoryTests : IAsyncDisposable {
     public async Task RegisterUser_And_SendMessage_Then_CheckLatest() {
         var user = new SimUserDTO { userName = "Asger" };
         var expected = Response.NoContent;
-        var actual = await _repository.RegisterUser(user);
+        var actual = await _repository.RegisterUser(user, 0);
 
         Assert.Equal(expected, actual);
 
