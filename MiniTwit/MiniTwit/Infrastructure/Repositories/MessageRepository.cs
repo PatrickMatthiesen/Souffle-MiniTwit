@@ -13,12 +13,14 @@ public class MessageRepository : IMessageRepository {
         _context = context;
     }
 
-    public Task<List<MessageDTO>> ReadAll() {
-        return _context.Messages.Select(m => new MessageDTO {
+    public Task<List<MessageDTO>> ReadAll()
+    {
+        return _context.Messages.Select(m => new MessageDTO
+        {
             Text = m.Text,
             PubDate = m.PubDate,
             AuthorName = m.Author.UserName
-        }).ToListAsync();
+        }).OrderByDescending(m => m.PubDate).ToListAsync();
     }
 
     public async Task<Option<MessageDTO>> ReadAsync(int id) {
