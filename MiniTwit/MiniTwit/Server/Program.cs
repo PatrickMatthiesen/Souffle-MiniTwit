@@ -5,6 +5,7 @@ using MiniTwit.Infrastructure.DbContext;
 using MiniTwit.Infrastructure.Models;
 using MiniTwit.Infrastructure.Repositories;
 using MiniTwit.Shared.IRepositories;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,7 +63,11 @@ else {
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
+app.UseMetricServer();
+app.UseHttpMetrics();
+
 app.UseRouting();
+
 
 app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
 app.UseIdentityServer();

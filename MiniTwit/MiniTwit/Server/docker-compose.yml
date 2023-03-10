@@ -2,16 +2,17 @@ version: '3.5'
 
 networks:
   main:
-    name: Network_Souffle
+    name: network_souffle
 
 services:
   minitwit.server:
     build:
-      context: ./MiniTwit
-      dockerfile: Dockerfile
-    container_name: Souffle-Server
+      context: ../..
+      dockerfile: MiniTwit/Server/Dockerfile
+    image: subjective0/minitwit-souffle
+    container_name: souffle-server
     ports:
-      - "5000:80"
+      - "3005:80"
     networks:
       - main
     depends_on:
