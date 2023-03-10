@@ -66,6 +66,8 @@ app.UseStaticFiles();
 app.UseMetricServer();
 app.UseHttpMetrics();
 
+Metrics.CreateCounter("myapp_request_counter", "Counts requests to the app");
+
 app.UseRouting();
 
 
