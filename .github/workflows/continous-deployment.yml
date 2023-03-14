@@ -62,8 +62,7 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
 
-      - name: Deploy on server
-        # Configure the ~./bash_profile and deploy.sh file on the Vagrantfile
+      - name: Deploy Server
         run: >
           ssh $SSH_USER@$SSH_HOST
           -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
@@ -75,3 +74,22 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+
+      - name: Copy Monitoring Files
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_DB_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "docker-compose-monitoring.yml,prometheus.yml"
+          target: "docker"
+          rm: true
+
+      - name: Deploy Monitoring
+        run: >
+          ssh $SSH_USER@$SSH_HOST
+          -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
+          "docker compose -f docker/docker-compose-monitoring.yml up"
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}

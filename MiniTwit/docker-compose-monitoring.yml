@@ -2,28 +2,19 @@ version: '3.5'
 
 networks:
   main:
-    name: network_souffle
+    name: monitoring_network
+
+volumes:
+    prometheys_storage:
+    grafana_storage:    
 
 services:
-  minitwit.server:
-    build:
-      context: ../..
-      dockerfile: MiniTwit/Server/Dockerfile
-    image: subjective0/minitwit-souffle
-    container_name: souffle-server
-    ports:
-      - "3005:80"
-    networks:
-      - main
-    depends_on:
-      - grafana
-      - prometheus
-
   prometheus:
     image: prom/prometheus
     container_name: prometheus
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheys_storage:/prometheus
     ports:
       - "9090:9090"
     networks:
@@ -31,6 +22,9 @@ services:
 
   grafana:
     image: grafana/grafana:9.4.3
+    container_name: grafana
+    volumes:
+      - grafana-storage:/var/lib/grafana
     ports:
       - "3000:3000"  
     networks:

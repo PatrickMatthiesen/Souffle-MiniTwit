@@ -4,7 +4,7 @@ global:
 
   # Attach these extra labels to all timeseries collected by this Prometheus instance.
   external_labels:
-    monitor: 'codelab-monitor'
+    monitor: 'souffle-monitor'
 
 rule_files:
   - 'prometheus.rules.yml'
@@ -23,7 +23,7 @@ scrape_configs:
     scrape_interval: 5s
 
     static_configs:
-      - targets: ['souffle-server:80']
+      - targets: ['68.183.209.28:5000']
         labels:
           group: 'production'
         
