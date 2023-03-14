@@ -1,0 +1,31 @@
+version: '3.5'
+
+networks:
+  main:
+    name: monitoring_network
+
+volumes:
+    prometheus_storage:
+    grafana_storage:    
+
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_storage:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - main
+
+  grafana:
+    image: grafana/grafana:9.4.3
+    container_name: grafana
+    volumes:
+      - grafana_storage:/var/lib/grafana
+    ports:
+      - "3000:3000"  
+    networks:
+      - main
