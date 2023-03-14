@@ -76,7 +76,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
 
       - name: Copy Monitoring Files
-        uses: appleboy/ssh-action@master
+        uses: appleboy/scp-action@v0.1.3
         with:
           host: ${{ secrets.SSH_DB_HOST }}
           username: ${{ secrets.SSH_USER }}
