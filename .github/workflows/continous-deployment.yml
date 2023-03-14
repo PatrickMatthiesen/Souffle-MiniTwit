@@ -81,9 +81,10 @@ jobs:
           host: ${{ secrets.SSH_DB_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "docker-compose-monitoring.yml,prometheus.yml"
+          source: "MiniTwit/docker-compose-monitoring.yml,MiniTwit/prometheus.yml"
           target: "docker"
           rm: true
+          strip_components: 1
 
       - name: Deploy Monitoring
         run: >
