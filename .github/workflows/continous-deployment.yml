@@ -75,16 +75,13 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
 
-      - name: Copy Monitoring Files
-        uses: appleboy/scp-action@v0.1.3
-        with:
-          host: ${{ secrets.SSH_DB_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "MiniTwit/docker-compose-monitoring.yml,MiniTwit/prometheus.yml"
-          target: "docker"
-          rm: true
-          strip_components: 1
+      - name: Copy files for Monitoring
+        run: |
+          scp docker-compose-monitoring.yml $SSH_USER@$SSH_HOST:docker
+          scp prometheus.yml $SSH_USER@$SSH_HOST:docker
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_DB_HOST }}
 
       - name: Deploy Monitoring
         run: >
@@ -93,4 +90,4 @@ jobs:
           "docker compose -f docker/docker-compose-monitoring.yml up"
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_HOST: ${{ secrets.SSH_DB_HOST }}
