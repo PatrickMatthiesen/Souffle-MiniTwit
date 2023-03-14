@@ -76,7 +76,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
 
       - name: Copy files for Monitoring
-        run: >
+        run: |
           scp docker-compose-monitoring.yml $SSH_USER@$SSH_HOST:docker
           scp prometheus.yml $SSH_USER@$SSH_HOST:docker
         env:
