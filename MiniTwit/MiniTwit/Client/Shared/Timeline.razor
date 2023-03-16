@@ -1,10 +1,18 @@
-﻿
+﻿@inject HttpClient _http
+@inject AuthenticationStateProvider _authStateProvider
+
 @for (int i = Messages.Count - 1; i >= 0; i--)
 {
+    var message = Messages[i];
     <div class="m-3 rounded border border-primary">
         <div class="d-flex flex-row">
-            <a href="timeline/@Messages[i].AuthorName" class="m-2">@Messages[i].AuthorName</a>
-            <div class="m-2 text-muted">@TimeSinceOrDate(Messages[i].PubDate)</div>
+            <a href="timeline/@message.AuthorName" class="m-2">@message.AuthorName</a>
+            <div class="m-2 text-muted">@TimeSinceOrDate(message.PubDate)</div>
+            <AuthorizeView>
+                <Authorized>
+                    <button class="text-primary text-body m-2 rounded" @onclick="() => FollowUser(message.AuthorName)" >Follow</button>
+                </Authorized>
+            </AuthorizeView>
         </div>
         <div class="m-2">@Messages[i].Text</div>
     </div>
@@ -26,15 +34,16 @@
             _ when ts.TotalSeconds >= 60 => $"{(int)Math.Floor(ts.TotalMinutes)} min.",
             _ => $"{(int)Math.Floor(ts.TotalSeconds)} sec."
         };
+    }
 
-
-        //return ts switch
-        //{
-        //    _ when ts.TotalDays >= 7 => ts.ToString("MMM dd, yyyy"),
-        //    _ when ts.TotalHours >= 24 => $"{(int)Math.Floor(ts.TotalDays)} {(ts.TotalDays < 2 ? "day" : "days")} ago",
-        //    _ when ts.TotalMinutes >= 60 => $"{(int)Math.Floor(ts.TotalHours)} {(ts.TotalHours < 2 ? "hour" : "hours")} ago",
-        //    _ when ts.TotalSeconds >= 60 => $"{(int)Math.Floor(ts.TotalMinutes)} {(ts.TotalMinutes < 2 ? "minute" : "minutes")} ago",
-        //    _ => $"{(int)Math.Floor(ts.TotalSeconds)} {(ts.TotalSeconds < 2 ? "second" : "seconds")} ago"
-        //};
+    private async void FollowUser(string username)
+    {
+        var currentUser = await _authStateProvider.GetUserIdAsync();
+        var result = await _http.PostAsync($"api/User/{currentUser}/follow/{username}", null);
+        if (result.IsSuccessStatusCode)
+        {
+            Console.WriteLine($"follow {username} was a success");
+            // TODO: do something so the button says unfollow and change the logic to unfollow the user
+        }
     }
 }
