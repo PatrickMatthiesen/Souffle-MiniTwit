@@ -1,10 +1,7 @@
-﻿@using Microsoft.AspNetCore.Authorization;
-@using MiniTwit.Client.Util;
-@using MiniTwit.Shared.DTO;
-@inject HttpClient _http;
-@inject AuthenticationStateProvider _authStateProvider;
+﻿@inject HttpClient _http
+@inject AuthenticationStateProvider _authStateProvider
 @inject NavigationManager _navManager
-@page "/timeline/{Username}";
+@page "/timeline/{Username}"
 @attribute [Authorize]
 
 <h3>@Username's Timeline</h3>

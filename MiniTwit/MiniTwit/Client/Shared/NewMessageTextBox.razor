@@ -1,7 +1,5 @@
-﻿@using MiniTwit.Client.Util;
-@using MiniTwit.Shared.DTO;
-@inject AuthenticationStateProvider _authStateProvider;
-@inject HttpClient _http;
+﻿@inject AuthenticationStateProvider _authStateProvider
+@inject HttpClient _http
 
 <div class="">
     <EditForm EditContext="@_editContext" OnValidSubmit="SendMessage" class="border rounded-2 m-2">

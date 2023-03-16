@@ -2,8 +2,6 @@
 @inject HttpClient _http
 @inject NavigationManager _navManager
 @inject AuthenticationStateProvider _authStateProvider
-@using MiniTwit.Client.Util;
-@using MiniTwit.Shared.DTO;
 @attribute [Authorize]
 
 <NewMessageTextBox _messages="_messages" OnSend="@(() => StateHasChanged())" />
