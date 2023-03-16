@@ -1,0 +1,26 @@
+﻿@if (Error is not null)
+{
+    <span>@Error</span>
+} else if (obj is null)
+{
+    <span>@text</span>
+} else
+{
+    @ChildContent
+}
+
+
+@code {
+    [Parameter]
+    public string? Error { get; set; }
+
+    [Parameter]
+    public required string text { get; set; }
+
+    [Parameter]
+    public required RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public required object? obj { get; set; }
+
+}

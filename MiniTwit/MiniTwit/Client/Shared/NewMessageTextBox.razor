@@ -1,12 +1,15 @@
-﻿@using MiniTwit.Shared.DTO;
-@inject AuthenticationStateProvider _authenticationStateProvider;
+﻿@using MiniTwit.Client.Util;
+@using MiniTwit.Shared.DTO;
+@inject AuthenticationStateProvider _authStateProvider;
 @inject HttpClient _http;
 
 <div class="">
-    <EditForm EditContext="@_editContext" OnValidSubmit="SendMessage" >
-        <InputTextArea id="text" class="form-control" @bind-Value="_message.Text">
+    <EditForm EditContext="@_editContext" OnValidSubmit="SendMessage" class="border rounded-2 m-2">
+        <InputTextArea id="text" class="form-control border-0" @bind-Value="_message.Text" >
         </InputTextArea>
-        <button class="" type="submit">Send -></button>
+        <div class="d-flex justify-content-end">
+            <button class="m-2 rounded-3 bg-primary text-white rounded" type="submit">Send -></button>
+        </div> 
     </EditForm>
 </div>
 

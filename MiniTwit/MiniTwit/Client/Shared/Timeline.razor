@@ -1,0 +1,42 @@
+﻿@using MiniTwit.Shared.DTO;
+
+
+@for (int i = Messages.Count - 1; i >= 0; i--)
+{
+    <div class="m-3 rounded border border-primary">
+        <div class="d-flex flex-row">
+            <a href="timeline/@Messages[i].AuthorName" class="m-2">@Messages[i].AuthorName</a>
+            <div class="m-2 text-muted">@TimeSinceOrDate(Messages[i].PubDate)</div>
+        </div>
+        <div class="m-2">@Messages[i].Text</div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public required List<MessageDTO> Messages { get; set; }
+
+    string TimeSinceOrDate(DateTime dateTime)
+    {
+        TimeSpan ts = DateTime.Now - dateTime;
+
+        return ts switch
+        {
+            _ when ts.TotalDays >= 7 => ts.ToString("MMM dd, yyyy"),
+            _ when ts.TotalHours >= 24 => $"{(int)Math.Floor(ts.TotalDays)} d.",
+            _ when ts.TotalMinutes >= 60 => $"{(int)Math.Floor(ts.TotalHours)} h.",
+            _ when ts.TotalSeconds >= 60 => $"{(int)Math.Floor(ts.TotalMinutes)} min.",
+            _ => $"{(int)Math.Floor(ts.TotalSeconds)} sec."
+        };
+
+
+        //return ts switch
+        //{
+        //    _ when ts.TotalDays >= 7 => ts.ToString("MMM dd, yyyy"),
+        //    _ when ts.TotalHours >= 24 => $"{(int)Math.Floor(ts.TotalDays)} {(ts.TotalDays < 2 ? "day" : "days")} ago",
+        //    _ when ts.TotalMinutes >= 60 => $"{(int)Math.Floor(ts.TotalHours)} {(ts.TotalHours < 2 ? "hour" : "hours")} ago",
+        //    _ when ts.TotalSeconds >= 60 => $"{(int)Math.Floor(ts.TotalMinutes)} {(ts.TotalMinutes < 2 ? "minute" : "minutes")} ago",
+        //    _ => $"{(int)Math.Floor(ts.TotalSeconds)} {(ts.TotalSeconds < 2 ? "second" : "seconds")} ago"
+        //};
+    }
+}
