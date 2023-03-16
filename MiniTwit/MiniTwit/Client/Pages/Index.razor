@@ -1,5 +1,5 @@
 ﻿@page "/"
-@inject HttpClient _http
+@inject IHttpClientFactory _httpFactory
 
 <PageTitle>Public Timeline</PageTitle>
 
@@ -26,11 +26,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var httpClient = new HttpClient();
-        httpClient.BaseAddress = new Uri("http://localhost:7000");
+        var client = _httpFactory.CreateClient("MiniTwit.UnAuth");
 
-        var result = await httpClient.GetAsync($"api/Message");
-        Console.Out.WriteLine("here");
+        var result = await client.GetAsync($"api/Message");
         if (!result.IsSuccessStatusCode)
         {
             _error = "Something went wrong loading the timeline";
