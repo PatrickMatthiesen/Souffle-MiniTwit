@@ -27,6 +27,7 @@ public class MessageController : ControllerBase {
         return (await _messageRepository.ReadAsync(id)).ToActionResult();
     }
 
+    [AllowAnonymous]
     [HttpGet("user/{userId}")]
     public async Task<ActionResult<List<MessageDTO>>> GetMessagesByUserId(string userId) {
         return await _messageRepository.ReadByUserId(userId);
