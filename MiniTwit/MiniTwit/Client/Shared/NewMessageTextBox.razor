@@ -29,7 +29,7 @@
 
     async void SendMessage()
     {
-        _message.AuthorId = (await _authenticationStateProvider.GetAuthenticationStateAsync()).User.FindFirst(c => c.Type == "sub").Value;
+        _message.AuthorId = await _authStateProvider.GetUserIdAsync();
         var responce = await _http.PostAsJsonAsync("api/Message/add", _message);
         if (!responce.IsSuccessStatusCode) return;
 
