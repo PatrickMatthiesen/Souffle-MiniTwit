@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using MiniTwit.Infrastructure.DbContext;
 using MiniTwit.Infrastructure.Models;
 using MiniTwit.Shared;
@@ -70,41 +71,41 @@ public class UserRepository : IUserRepository {
         }
     }
 
-    public async Task<Response> Follow(string Id_Own, string Id_Target) {
-        var entity = await _context.Users.FindAsync(Id_Own);
+    public async Task<Response> Follow(string userId, string targetName) {
+        var entity = await _context.Users.Include("Follows").FirstOrDefaultAsync(u => u.Id == userId);
 
-        var target = _context.Users.FindAsync(Id_Target);
-        var targetUser = target.Result;
+        if (entity is null) return Response.NotFound;
+        if (entity.UserName == targetName) return Response.Conflict;
 
-        Response response;
+        var target = await _context.Users.FirstOrDefaultAsync(u => u.UserName == targetName);
 
-        if (entity.Follows.Contains(targetUser)) {
-            response = Response.Conflict;
+        if (target is null) return Response.NotFound;
+
+        if (entity.Follows.Contains(target)) {
+            return Response.Conflict;
         }
-        else {
-            entity.Follows.Add(targetUser);
-            await _context.SaveChangesAsync();
-            response = Response.OK;
-        }
-        return response;
+
+        entity.Follows.Add(target);
+        await _context.SaveChangesAsync();
+        return Response.NoContent;
     }
 
-    public async Task<Response> UnFollow(string Id_Own, string Id_Target) {
-        var entity = await _context.Users.FindAsync(Id_Own);
+    public async Task<Response> UnFollow(string userId, string targetName) {
+        var entity = await _context.Users.FindAsync(userId);
 
-        var target = entity.Follows.FirstOrDefault(f => f.Id == Id_Target);
+        if (entity is null) return Response.NotFound;
 
-        Response response;
+        var target = entity.Follows.FirstOrDefault(f => f.UserName == targetName);
 
-        if (target is not null && entity.Follows.Contains(target)) {
-            entity.Follows.Remove(target);
-            await _context.SaveChangesAsync();
-            response = Response.Updated;
+        if (target is null) return Response.NotFound;
+
+        if (entity.Follows.Contains(target)) {
+            return Response.NotFound;
         }
-        else {
-            response = Response.NotFound;
-        }
-        return response;
+
+        entity.Follows.Remove(target);
+        await _context.SaveChangesAsync();
+        return Response.NoContent;
     }
 
     public async Task<List<UserDTO>> ReadFollowsAsync(string Id) {

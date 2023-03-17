@@ -17,12 +17,16 @@ public static class ToActionResultExtensions {
         };
     }
 
+    public static async Task<IActionResult> ToActionResult(this Task<Response> response)
+    {
+        return (await response).ToActionResult();
+    }
+
     public static ActionResult<T> ToActionResult<T>(this Option<T> option) where T : class {
         return option.IsSome ? option.Value : new NotFoundResult();
     }
 
     public static async Task<ActionResult<T>> ToActionResult<T>(this Task<Option<T>> optionTask) where T : class {
-        var option = await optionTask;
-        return option.IsSome ? option.Value : new NotFoundResult();
+        return (await optionTask).ToActionResult();
     }
 }

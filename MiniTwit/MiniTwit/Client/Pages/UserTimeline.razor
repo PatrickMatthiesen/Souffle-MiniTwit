@@ -1,0 +1,31 @@
+﻿@inject HttpClient _http
+@inject AuthenticationStateProvider _authStateProvider
+@inject NavigationManager _navManager
+@page "/timeline/{Username}"
+
+<h3>@Username's Timeline</h3>
+
+<ContentDisplay text="Loading ..." obj="_messages" Error="@_error">
+    <ChildContent>
+        <Timeline Messages="_messages" />
+    </ChildContent>
+</ContentDisplay>
+
+@code {
+    [Parameter]
+    public string? Username { get; set; }
+
+    private List<MessageDTO> _messages { get; set; }
+
+    private string? _error { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (await _authStateProvider.GetUserNameAsync() == Username)
+        {
+            _navManager.NavigateTo("/my-timeline");
+        }
+        
+        _messages = await _http.GetFromJsonAsync<List<MessageDTO>>($"api/Message/user/{Username}");
+    }
+}

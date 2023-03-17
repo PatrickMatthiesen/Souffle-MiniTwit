@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MiniTwit.Server.Util;
 using MiniTwit.Shared.DTO;
 using MiniTwit.Shared.IRepositories;
 
 namespace MiniTwit.Server.Controllers;
+
 [Route("api/[controller]")]
 [ApiController]
 public class MessageController : ControllerBase {
@@ -14,6 +16,7 @@ public class MessageController : ControllerBase {
         _messageRepository = messageRepository;
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<List<MessageDTO>>> Get() {
         return await _messageRepository.ReadAll();
@@ -24,6 +27,7 @@ public class MessageController : ControllerBase {
         return (await _messageRepository.ReadAsync(id)).ToActionResult();
     }
 
+    [AllowAnonymous]
     [HttpGet("user/{userId}")]
     public async Task<ActionResult<List<MessageDTO>>> GetMessagesByUserId(string userId) {
         return await _messageRepository.ReadByUserId(userId);

@@ -1,9 +1,39 @@
 ﻿@page "/"
+@inject IHttpClientFactory _httpFactory
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Public Timeline</PageTitle>
 
-<h1>Hello, world!</h1>
+<AuthorizeView>
+    <Authorized>
+        <NewMessageTextBox _messages="_messages" OnSend="@(() => StateHasChanged())" />
+    </Authorized>
+    <NotAuthorized>
+    </NotAuthorized>
+</AuthorizeView>
 
-Welcome to your new app.
+<ContentDisplay text="Loading ..." obj="_messages" Error="@_error">
+    <ChildContent>
+        <Timeline Messages="_messages" />
+    </ChildContent>
+</ContentDisplay>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+
+
+@code {
+    private List<MessageDTO> _messages;
+
+    private string _error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = _httpFactory.CreateClient("MiniTwit.UnAuth");
+
+        var result = await client.GetAsync($"api/Message");
+        if (!result.IsSuccessStatusCode)
+        {
+            _error = "Something went wrong loading the timeline";
+            return;
+        }
+        _messages = await result.Content.ReadFromJsonAsync<List<MessageDTO>>();
+    }
+}

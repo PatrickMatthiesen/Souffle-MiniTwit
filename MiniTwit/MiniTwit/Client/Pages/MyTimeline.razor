@@ -1,17 +1,31 @@
-﻿@page "/MyTimeline"
+﻿@page "/my-timeline"
+@inject HttpClient _http
 @inject NavigationManager _navManager
-@inject AuthenticationStateProvider _authenticationStateProvider
+@inject AuthenticationStateProvider _authStateProvider
 @attribute [Authorize]
 
+<NewMessageTextBox _messages="_messages" OnSend="@(() => StateHasChanged())" />
+
+<ContentDisplay text="Loading ..." obj="_messages" Error="@_error">
+    <ChildContent>
+        <Timeline Messages="_messages" />
+    </ChildContent>
+</ContentDisplay>
+
 @code {
+    private List<MessageDTO> _messages;
+
+    private string _error;
+
     protected override async Task OnInitializedAsync()
     {
-        _navManager.NavigateTo("/timeline/" + await CurrentUser());
-    }
-
-    async Task<string> CurrentUser()
-    {
-        var userName = (await _authenticationStateProvider.GetAuthenticationStateAsync()).User.Identity.Name;
-        return userName;
+        var userId = await _authStateProvider.GetUserIdAsync();
+        var result = await _http.GetAsync($"api/Message/user/{userId}");
+        if (!result.IsSuccessStatusCode)
+        {
+            _error = "Something went wrong loading the timeline";
+            return;
+        }
+        _messages = await result.Content.ReadFromJsonAsync<List<MessageDTO>>();
     }
 }
