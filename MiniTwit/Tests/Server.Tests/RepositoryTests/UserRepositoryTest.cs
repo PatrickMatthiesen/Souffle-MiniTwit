@@ -91,16 +91,16 @@ public sealed class UserRepositoryTests : IAsyncDisposable {
     }
 
     [Fact]
-    public async Task Follow_OK() {
+    public async Task Follow_Returns_NoContent() {
         var expectedFollower = new UserCreateDTO("5", "Patrick", "Patrick@itu.dk");
         var (response1, followerId) = await _repository.CreateAsync(expectedFollower);
 
         var targetFollower = new UserCreateDTO("10", "Søren", "Søren@itu.dk");
         var (response2, targetId) = await _repository.CreateAsync(targetFollower);
 
-        var response = await _repository.Follow(followerId, targetId);
+        var response = await _repository.Follow(followerId, targetFollower.Name);
 
-        Assert.Equal(MiniTwit.Shared.Response.OK, response);
+        Assert.Equal(MiniTwit.Shared.Response.NoContent, response);
     }
 
     [Fact]
@@ -111,8 +111,8 @@ public sealed class UserRepositoryTests : IAsyncDisposable {
         var targetFollower = new UserCreateDTO("10", "Søren", "Søren@itu.dk");
         var (response2, targetId) = await _repository.CreateAsync(targetFollower);
 
-        var OK = await _repository.Follow(followerId, targetId);
-        var Conflict = await _repository.Follow(followerId, targetId);
+        var OK = await _repository.Follow(followerId, targetFollower.Name);
+        var Conflict = await _repository.Follow(followerId, targetFollower.Name);
 
         Assert.Equal(MiniTwit.Shared.Response.Conflict, Conflict);
     }
@@ -125,7 +125,7 @@ public sealed class UserRepositoryTests : IAsyncDisposable {
         var targetFollower = new UserCreateDTO("10", "Søren", "Søren@itu.dk");
         var (response2, targetId) = await _repository.CreateAsync(targetFollower);
 
-        var tmp = await _repository.Follow(followerId, targetId);
+        var tmp = await _repository.Follow(followerId, targetFollower.Name);
 
         var result = await _repository.ReadFollowsAsync(followerId);
 
@@ -143,7 +143,7 @@ public sealed class UserRepositoryTests : IAsyncDisposable {
         var (response2, targetId) = await _repository.CreateAsync(targetFollower);
 
         var followResponse = await _repository.Follow(followerId, targetId);
-        var unfollowResponse = await _repository.UnFollow(followerId, targetId);
+        var unfollowResponse = await _repository.UnFollow(followerId, targetFollower.Name);
 
         var result = await _repository.ReadFollowsAsync(followerId);
         var expectedList = new List<UserDTO> { };
