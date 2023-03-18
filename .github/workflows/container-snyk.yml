@@ -29,7 +29,7 @@ jobs:
       with:
         sarif_file: snyk.sarif
 
-  security:
+  snyk-check:
     runs-on: ubuntu-latest
     steps:
     - name: Run Snyk to check Docker images for vulnerabilities
