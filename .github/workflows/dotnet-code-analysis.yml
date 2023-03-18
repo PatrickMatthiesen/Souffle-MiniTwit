@@ -1,0 +1,16 @@
+name: .NET Code Analysis
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Run .NET Code Analysis
+      uses: dotnet/code-analysis@v1
+      id: code-analysis
+      with:
+        solution: MySolution.sln
+        build-breaking: true
+        all-categories: all
