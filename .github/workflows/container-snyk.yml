@@ -1,7 +1,11 @@
-name: Snyk Container
-on: push
+name: Snyk
+on: 
+  push:
+    branches:
+      - main
 jobs:
-  snyk:
+  snyk-report:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -24,3 +28,14 @@ jobs:
       uses: github/codeql-action/upload-sarif@v2
       with:
         sarif_file: snyk.sarif
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Run Snyk to check Docker images for vulnerabilities
+      uses: snyk/actions/docker@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        image: your/image-to-test
+        args: --severity-threshold=high
