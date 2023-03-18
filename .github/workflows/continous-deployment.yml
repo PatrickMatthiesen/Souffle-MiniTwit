@@ -77,8 +77,8 @@ jobs:
 
       - name: Copy files for Monitoring
         run: |
-          scp docker-compose-monitoring.yml $SSH_USER@$SSH_HOST:docker
-          scp prometheus.yml $SSH_USER@$SSH_HOST:docker
+          scp -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no docker-compose-monitoring.yml $SSH_USER@$SSH_HOST:docker
+          scp -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no prometheus.yml $SSH_USER@$SSH_HOST:docker
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_DB_HOST }}
