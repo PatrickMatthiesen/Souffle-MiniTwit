@@ -51,8 +51,10 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/minitwit-db:latest
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/minitwit-db:mysqlbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/minitwit-db:mysqlbuildcache,mode=max
-
-
+  deploy:
+    runs-on: ubuntu-latest
+    needs: image-build
+    steps:
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh/
