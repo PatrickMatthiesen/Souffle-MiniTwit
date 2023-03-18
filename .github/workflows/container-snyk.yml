@@ -9,6 +9,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
   
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+  
     - name: Build and push minitwit-db snyk image
       uses: docker/build-push-action@v2
       with:
@@ -28,6 +34,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
     - name: Run Snyk to check Docker image for vulnerabilities
       # Snyk can be used to break the build when it detects vulnerabilities.
       # In this case we want to upload the issues to GitHub Code Scanning
@@ -51,6 +64,12 @@ jobs:
     needs: build-container
     steps:
     - uses: actions/checkout@v2
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Run Snyk to check Docker images for vulnerabilities
       uses: snyk/actions/docker@master
