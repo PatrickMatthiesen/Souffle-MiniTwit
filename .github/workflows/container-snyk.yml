@@ -34,6 +34,10 @@ jobs:
   snyk-check:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
+    - name: Build a Docker image
+      run: docker build -t your/image-to-test -f MiniTwit/MiniTwit/Server/Dockerfile ./MiniTwit
+
     - name: Run Snyk to check Docker images for vulnerabilities
       uses: snyk/actions/docker@master
       env:
