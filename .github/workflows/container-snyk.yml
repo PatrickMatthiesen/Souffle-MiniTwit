@@ -19,10 +19,11 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: ./MiniTwit
-        file: MiniTwit/MiniTwit/Server/Dockerfile.database
+        file: MiniTwit/MiniTwit/Server/Dockerfile
         push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/minitwit-db:snyk
-
+        cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/minitwit-souffle:snyk-webbuildcache
+        cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/minitwit-souffle:snyk-webbuildcache,mode=max
 
   snyk-report:
     runs-on: ubuntu-latest

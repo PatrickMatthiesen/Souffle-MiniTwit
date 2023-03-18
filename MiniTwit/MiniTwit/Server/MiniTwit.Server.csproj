@@ -14,7 +14,7 @@
 	
 	<ItemGroup>
 		<ContainerEnvironmentVariable Include="ConnectionStrings:MiniTwit-db">
-			<Value>Server=MiniTwit-db;Database=MiniTwit-db;User Id=sa;Password=a282f131-5323-419c-9c8e-55535d486550;MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=True</Value>
+			<Value>set value here</Value>
 		</ContainerEnvironmentVariable>
 		<ContainerPort Include="80" Type="tcp" />
 		<ContainerEnvironmentVariable Include="ASPNETCORE_URLS" Value="http://localhost:5000" />
