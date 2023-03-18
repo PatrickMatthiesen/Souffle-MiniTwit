@@ -6,11 +6,6 @@ on:
     # Run workflow every time something is pushed to the main branch
     branches:
       - main
-      - master
-  # allow manual triggers for now too
-  workflow_dispatch:
-    manual: true
-
 
 jobs:
   image-build:
@@ -79,8 +74,8 @@ jobs:
 
       - name: Copy files for Monitoring
         run: |
-          scp -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no docker-compose-monitoring.yml $SSH_USER@$SSH_HOST:docker
-          scp -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no prometheus.yml $SSH_USER@$SSH_HOST:docker
+          scp -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no MiniTwit/docker-compose-monitoring.yml $SSH_USER@$SSH_HOST:docker
+          scp -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no MiniTwit/prometheus.yml $SSH_USER@$SSH_HOST:docker
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_DB_HOST }}
