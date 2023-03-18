@@ -1,8 +1,8 @@
 name: Snyk
 on: 
   push:
-    branches:
-      - main
+    #branches:
+    #  - main
 jobs:
   snyk-report:
     permissions: write-all
