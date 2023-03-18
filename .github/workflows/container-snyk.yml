@@ -1,8 +1,7 @@
 name: Snyk
 on: 
-  push:
-    #branches:
-    #  - main
+  pull_request:
+  
 jobs:
   build-container:
     runs-on: ubuntu-latest
