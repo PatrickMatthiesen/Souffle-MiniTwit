@@ -4,15 +4,30 @@ on:
     #branches:
     #  - main
 jobs:
-  snyk-report:
-    permissions:
-      contents: read # for actions/checkout to fetch code
-      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+  build-container:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Build a Docker image
-      run: docker build -t your/image-to-test -f MiniTwit/MiniTwit/Server/Dockerfile ./MiniTwit
+  
+    - name: Build and push minitwit-db snyk image
+      uses: docker/build-push-action@v2
+      with:
+        context: ./MiniTwit
+        file: MiniTwit/MiniTwit/Server/Dockerfile.database
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/minitwit-db:snyk
+
+
+  snyk-report:
+    runs-on: ubuntu-latest
+    needs: build-container
+    
+    permissions:
+      contents: read # for actions/checkout to fetch code
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+
+    steps:
+    - uses: actions/checkout@v2
     - name: Run Snyk to check Docker image for vulnerabilities
       # Snyk can be used to break the build when it detects vulnerabilities.
       # In this case we want to upload the issues to GitHub Code Scanning
@@ -24,7 +39,7 @@ jobs:
         # or you can sign up for free at https://snyk.io/login
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        image: your/image-to-test
+        image: ${{ secrets.DOCKERHUB_USERNAME }}/minitwit-db:snyk
         args: --file=MiniTwit/MiniTwit/Server/Dockerfile
     - name: Upload result to GitHub Code Scanning
       uses: github/codeql-action/upload-sarif@v2
@@ -33,15 +48,14 @@ jobs:
 
   snyk-check:
     runs-on: ubuntu-latest
+    needs: build-container
     steps:
     - uses: actions/checkout@v2
-    - name: Build a Docker image
-      run: docker build -t your/image-to-test -f MiniTwit/MiniTwit/Server/Dockerfile ./MiniTwit
 
     - name: Run Snyk to check Docker images for vulnerabilities
       uses: snyk/actions/docker@master
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        image: your/image-to-test
+        image: ${{ secrets.DOCKERHUB_USERNAME }}/minitwit-db:snyk
         args: --severity-threshold=high
