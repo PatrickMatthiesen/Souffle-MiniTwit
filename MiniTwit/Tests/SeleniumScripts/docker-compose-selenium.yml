@@ -1,0 +1,25 @@
+version: "3.3"
+
+services:
+  mssql_source:
+    image: "mcr.microsoft.com/mssql/server:latest"
+    container_name: "mssql_source_db"
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: ${SOURCE_DB_PASSWORD}
+    env_file:
+      - .env
+
+  app:
+    build: .
+    depends_on:
+      - mssql_source
+    environment:
+      SOURCE_DB_HOST: mssql_source
+      SOURCE_DB_NAME: ${SOURCE_DB_NAME}
+      SOURCE_DB_USERNAME: ${SOURCE_DB_USERNAME}
+      SOURCE_DB_PASSWORD: ${SOURCE_DB_PASSWORD}
+    env_file:
+      - .env
