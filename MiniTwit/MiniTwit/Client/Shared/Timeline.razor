@@ -11,6 +11,7 @@
             <AuthorizeView>
                 <Authorized>
                     <button class="text-primary text-body m-2 rounded" @onclick="() => FollowUser(message.AuthorName)" >Follow</button>
+                    <button class="text-primary text-body m-2 rounded" @onclick="() => UnFollowUser(message.AuthorName)" >UnFollow</button>
                 </Authorized>
             </AuthorizeView>
         </div>
@@ -46,4 +47,16 @@
             // TODO: do something so the button says unfollow and change the logic to unfollow the user
         }
     }
+
+    private async void UnFollowUser(string username) 
+    {
+        var currentUser = await _authStateProvider.GetUserIdAsync();
+        var result = await _http.DeleteAsync($"api/User/{currentUser}/unfollow/{username}");
+        if (result.IsSuccessStatusCode) 
+        {
+            Console.WriteLine($"UnFollow of {username} was a success");
+        }
+
+    }
+
 }

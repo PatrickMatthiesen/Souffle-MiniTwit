@@ -29,6 +29,12 @@ public class UserController : ControllerBase
         return await _repository.ReadMessagesFromUserNameAsync(userName);
     }
 
+    [HttpDelete("{userId}/un-follow{nameToUnFollow}")]
+    public async Task<IActionResult> UnFollowUserByName(string userId, string nameToUnFollow)
+    {
+        return await _repository.UnFollowAsync(userId, nameToUnFollow).ToActionResult();
+    }
+
     [HttpPost("{userId}/follow/{nameToFollow}")]
     public async Task<IActionResult> FollowUserByName(string userId, string nameToFollow)
     {
@@ -42,8 +48,5 @@ public class UserController : ControllerBase
     }
 
 
-
 }
 // username, httpget
-// follow 
-// unfollows

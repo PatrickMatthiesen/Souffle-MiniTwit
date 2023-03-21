@@ -107,19 +107,21 @@ public class UserRepository : IUserRepository
         return Response.NoContent;
     }
 
-    public async Task<Response> UnFollow(string userId, string targetName)
+    public async Task<Response> UnFollowAsync(string userId, string targetName)
     {
-        var entity = await _context.Users.FindAsync(userId);
+        var entity = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
         if (entity is null)
             return Response.NotFound;
+        if (entity.UserName == targetName)
+            return Response.Conflict;
 
         var target = entity.Follows.FirstOrDefault(f => f.UserName == targetName);
 
         if (target is null)
             return Response.NotFound;
 
-        if (entity.Follows.Contains(target))
+        if (!entity.Follows.Contains(target))
         {
             return Response.NotFound;
         }

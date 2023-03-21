@@ -24,6 +24,7 @@
         if (await _authStateProvider.GetUserNameAsync() == Username)
         {
             _navManager.NavigateTo("/my-timeline");
+            
         }
         
         _messages = await _http.GetFromJsonAsync<List<MessageDTO>>($"api/Message/user/{Username}");
