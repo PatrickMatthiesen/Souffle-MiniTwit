@@ -44,7 +44,7 @@ public class UserController : ControllerBase
     [HttpPost("{userId}/my-timeline")]
     public async Task<List<MessageDTO>> GetMyTimeline(string userId)
     {
-        return await _repository.ReadMessagesFromUserNameAsync(userId);
+        return await _repository.ReadMyTimelineAsync(userId);
     }
 
 

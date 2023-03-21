@@ -170,6 +170,18 @@ public class UserRepository : IUserRepository
         return messages;
     }
 
+    public async Task<List<MessageDTO>> ReadMyTimelineAsync(string id)
+    {
+        var user = await _context.Users.Include("Follows.Messages").FirstOrDefaultAsync(u => u.Id == id);
+
+        var messages = from u in user.Follows
+                       from m in u.Messages
+                       select new MessageDTO { Text = m.Text, PubDate = m.PubDate, AuthorName = m.Author.UserName };
+
+        return user.Messages.Select(m => new MessageDTO { Text = m.Text, PubDate = m.PubDate, AuthorName = m.Author.UserName }).Concat(messages).ToList();
+    }
+
+
 
     public async Task<Response> DeleteAsync(string userId, bool force = false)
     {

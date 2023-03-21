@@ -12,6 +12,7 @@ public interface IUserRepository
     Task<Response> UnFollowAsync(string Id_own, string Id_target);
     Task<Response> Follow(string Id_own, string Id_target);
     Task<List<MessageDTO>> ReadMessagesFromUserNameAsync(string userName);
+    Task<List<MessageDTO>> ReadMyTimelineAsync(string id);
     Task<Response> DeleteAsync(string userId, bool force = false);
 
 }
