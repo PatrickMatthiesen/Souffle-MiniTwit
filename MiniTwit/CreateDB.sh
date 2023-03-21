@@ -22,5 +22,5 @@ dotnet dev-certs https --trust
 echo ""
 
 echo -e "${Green}Updating database...${NC}"
-dotnet ef database update -p $serverPath
+dotnet ef database update -p MiniTwit/Infrastructure -s $serverPath
 echo ""

@@ -19,5 +19,5 @@ dotnet dev-certs https --trust
 Write-Host ""
 
 Write-Host -ForegroundColor Green "Updating database..."
-dotnet ef database update -p $serverPath
+dotnet ef database update -p MiniTwit/Infrastructure -s $serverPath
 Write-Host ""
