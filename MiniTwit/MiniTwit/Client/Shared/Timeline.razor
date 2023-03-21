@@ -24,7 +24,7 @@
 
     public string TimeSinceOrDate(DateTime dateTime)
     {
-        TimeSpan ts = DateTime.Now.AddHours(1.0) - dateTime;
+        TimeSpan ts = DateTime.Now - dateTime.AddHours(1.0);
         
         Console.WriteLine("TimeStamp: " + ts.ToString());
 
