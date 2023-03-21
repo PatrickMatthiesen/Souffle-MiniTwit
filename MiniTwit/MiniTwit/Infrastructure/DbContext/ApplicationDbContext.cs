@@ -17,5 +17,14 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser> {
         IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions) {
     }
 
+    //protected override void OnModelCreating(ModelBuilder modelBuilder)
+    //{
+    //    base.OnModelCreating(modelBuilder);
+
+    //    modelBuilder.Entity<ApplicationUser>()
+    //        .HasOne(u => u.Id)
+    //        .WithMany(u => u.Follows);
+    //}
+
 
 }
