@@ -3,6 +3,9 @@ on: pull_request
 jobs:
   dotnet-format:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./MiniTwit
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
