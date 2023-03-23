@@ -23,6 +23,11 @@ public class MessageRepository : IMessageRepository {
         }).OrderByDescending(m => m.PubDate).Take(100).Reverse().ToListAsync();
     }
 
+    /// <summary>
+    /// gets a message by id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public async Task<Option<MessageDTO>> ReadAsync(int id) {
         var message = await _context.Messages.FindAsync(id);
 
