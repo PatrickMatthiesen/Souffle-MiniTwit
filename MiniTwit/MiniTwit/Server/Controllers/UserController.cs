@@ -29,7 +29,7 @@ public class UserController : ControllerBase
         return await _repository.ReadMessagesFromUserNameAsync(userName);
     }
 
-    [HttpDelete("{userId}/un-follow{nameToUnFollow}")]
+    [HttpDelete("{userId}/unfollow/{nameToUnFollow}")]
     public async Task<IActionResult> UnFollowUserByName(string userId, string nameToUnFollow)
     {
         return await _repository.UnFollowAsync(userId, nameToUnFollow).ToActionResult();
