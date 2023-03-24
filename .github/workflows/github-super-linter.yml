@@ -1,3 +1,4 @@
+---
 #################################
 #################################
 ## Super Linter GitHub Actions ##
@@ -33,5 +34,6 @@ jobs:
         uses: github/super-linter@v4
         env:
           VALIDATE_ALL_CODEBASE: false
+          YAML_ERROR_ON_WARNING: false
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
