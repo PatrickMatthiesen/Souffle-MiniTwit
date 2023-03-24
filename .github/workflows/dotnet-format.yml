@@ -8,7 +8,7 @@ jobs:
         working-directory: ./MiniTwit
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Add dotnet-format problem matcher
         uses: xt0rted/dotnet-format-problem-matcher@v1.2.0
@@ -17,4 +17,4 @@ jobs:
         uses: xt0rted/dotnet-tool-restore@v1.0.1
 
       - name: Run dotnet format
-        uses: xt0rted/dotnet-format@v1.2.0
+        run: dotnet format ./MiniTwit.sln
