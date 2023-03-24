@@ -17,11 +17,10 @@
 
     private string _error;
 
-    protected override async Task OnInitializedAsync()
-    {
+    protected override async Task OnInitializedAsync() {
         var userId = await _authStateProvider.GetUserIdAsync();
-        if (!result.IsSuccessStatusCode)
         var result = await _http.GetAsync($"api/User/{userId}/mytimeline");
+        if (!result.IsSuccessStatusCode)
         {
             _error = "Something went wrong loading the timeline";
             return;
