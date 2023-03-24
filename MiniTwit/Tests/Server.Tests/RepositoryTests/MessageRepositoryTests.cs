@@ -1,7 +1,6 @@
 using Duende.IdentityServer.EntityFramework.Options;
 using MiniTwit.Infrastructure.Models;
 using Microsoft.Extensions.Options;
-using MiniTwit.Infrastructure.DbContext;
 using MiniTwit.Infrastructure.Repositories;
 using MiniTwit.Shared.DTO;
 
@@ -59,13 +58,47 @@ public sealed class MessageRepositoryTests : IAsyncDisposable {
     [Fact]
     public async Task AddMessage_succes() {
 
-        var createDTO = new CreateMessageDTO { Text = "Hello from Asger", AuthorId = "5" }; //text, authorid
+        var createDTO = new CreateMessageDTO { Text = "Hello from Asger", AuthorId = "0" };
 
-        // var msg = await _repository.AddMessage(createDTO);
-        // var test = await _repository.ReadAsync(msg.Value.Id);
-        // var result = new MessageDTO{AuthorName = "Asger", Text = "Hello from Asger"};
-        // Assert.Equal(true,test.IsSome);
+        var msg = await _repository.AddMessage(createDTO);
+        Assert.True(msg.IsSome);
+        var test = await _repository.ReadAsync(msg.Value.Id);
+        var result = new MessageDTO { AuthorName = "Asger", Text = "Hello from Asger" };
+        Assert.True(test.IsSome);
 
+    }
+
+    /// <summary>
+    /// test time conversion from utc+0 to local
+    /// </summary>
+    [Fact]
+    public void TimeConversion()
+    {
+        // Assume we have a UTC time
+        DateTime utcTime = new DateTime(2000, 6, 1);
+        DateTime server = DateTime.SpecifyKind(utcTime, DateTimeKind.Utc);
+        Assert.Equal(utcTime, server);
+
+        TimeZoneInfo timeZone = TimeZoneInfo.Local;
+        DateTime utcPlusOneDateTime = TimeZoneInfo.ConvertTimeFromUtc(utcTime, timeZone);
+        Assert.Equal(utcPlusOneDateTime.ToString(), server.ToLocalTime().ToString());
+
+        var timeString = TimeSinceOrDate(server, utcPlusOneDateTime);
+        Assert.Equal($"{utcPlusOneDateTime.Second} sec.", timeString);
+    }
+
+    public string TimeSinceOrDate(DateTime dateTime, DateTime now)
+    {
+        TimeSpan ts = now - dateTime.ToLocalTime();
+
+        return ts switch
+        {
+            _ when ts.TotalDays >= 7 => dateTime.ToString("d MMM yyyy"),
+            _ when ts.TotalHours >= 24 => $"{(int)Math.Floor(ts.TotalDays)} d.",
+            _ when ts.TotalMinutes >= 60 => $"{(int)Math.Floor(ts.TotalHours)} h.",
+            _ when ts.TotalSeconds >= 60 => $"{(int)Math.Floor(ts.TotalMinutes)} min.",
+            _ => $"{(int)Math.Floor(ts.TotalSeconds)} sec."
+        };
     }
 
     // [Fact]

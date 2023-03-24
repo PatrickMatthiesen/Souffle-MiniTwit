@@ -16,6 +16,4 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser> {
         DbContextOptions options,
         IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions) {
     }
-
-
 }
