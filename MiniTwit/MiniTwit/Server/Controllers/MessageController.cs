@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using MiniTwit.Server.Util;
 using MiniTwit.Shared.DTO;
 using MiniTwit.Shared.IRepositories;
@@ -23,6 +24,7 @@ public class MessageController : ControllerBase {
     }
 
     [HttpGet("{id}")]
+    [OutputCache]
     public async Task<ActionResult<MessageDTO>> GetMessageById(int id) {
         return (await _messageRepository.ReadAsync(id)).ToActionResult();
     }

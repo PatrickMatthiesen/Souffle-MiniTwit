@@ -11,13 +11,10 @@ namespace MiniTwit.Server.Controllers;
 [ApiController]
 public class SimController : ControllerBase {
     private readonly IMessageRepository _messageRepository;
-    private readonly IUserRepository _userRepository;
     private readonly ISimRepository _simRepository;
 
-
-    public SimController(ISimRepository simRepository, IUserRepository userRepository, IMessageRepository messageRepository) {
+    public SimController(ISimRepository simRepository, IMessageRepository messageRepository) {
         _simRepository = simRepository;
-        _userRepository = userRepository;
         _messageRepository = messageRepository;
 
     }
@@ -60,7 +57,7 @@ public class SimController : ControllerBase {
 
     [HttpGet("fllws/{username}")]
     public async Task<ActionResult<List<UserDTO>>> GetFollows(string username) {
-        return await _userRepository.ReadFollowsAsync(username);
+        return await _simRepository.GetFollows(username);
     }
 
     [HttpPost("fllws/{username}")]

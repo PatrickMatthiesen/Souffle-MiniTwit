@@ -25,11 +25,11 @@
 
     public string TimeSinceOrDate(DateTime dateTime)
     {
-        TimeSpan ts = DateTime.Now - dateTime.AddHours(1.0);
+        TimeSpan ts = DateTime.Now - dateTime.ToLocalTime();
 
         return ts switch
         {
-            _ when ts.TotalDays >= 7 => ts.ToString("MM dd, yyyy"),
+            _ when ts.TotalDays >= 7 => dateTime.ToString("d MMM yyyy"),
             _ when ts.TotalHours >= 24 => $"{(int)Math.Floor(ts.TotalDays)} d.",
             _ when ts.TotalMinutes >= 60 => $"{(int)Math.Floor(ts.TotalHours)} h.",
             _ when ts.TotalSeconds >= 60 => $"{(int)Math.Floor(ts.TotalMinutes)} min.",

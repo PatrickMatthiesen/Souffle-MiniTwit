@@ -108,14 +108,14 @@ public class SimRepository : ISimRepository {
     }
 
 
-    public async Task<Response> CreateOrRemoveFollower(string username, string Id_Target, int? latestMessage, bool follow = true) {
+    public async Task<Response> CreateOrRemoveFollower(string username, string targetUserName, int? latestMessage, bool follow = true) {
         var entity = await _context.Users.Include("Follows").FirstOrDefaultAsync(u => u.UserName == username);
 
         if (entity == null) {
             return Response.NotFound;
         }
 
-        var targetUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == Id_Target);
+        var targetUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == targetUserName);
 
         if (targetUser == null) {
             return Response.NotFound;
