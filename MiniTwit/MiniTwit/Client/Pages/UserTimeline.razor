@@ -1,4 +1,4 @@
-﻿@inject HttpClient _http
+﻿@inject IHttpClientFactory _httpFactory
 @inject AuthenticationStateProvider _authStateProvider
 @inject NavigationManager _navManager
 @page "/timeline/{Username}"
@@ -26,7 +26,14 @@
             _navManager.NavigateTo("/my-timeline");
             
         }
-        
-        _messages = await _http.GetFromJsonAsync<List<MessageDTO>>($"api/Message/user/{Username}");
+        var client = _httpFactory.CreateClient("MiniTwit.UnAuth");
+
+        var result = await client.GetAsync($"api/Message/user/{Username}");
+        if (!result.IsSuccessStatusCode)
+        {
+            _error = "Something went wrong loading the timeline";
+            return;
+        }
+        _messages = await result.Content.ReadFromJsonAsync<List<MessageDTO>>();        
     }
 }
