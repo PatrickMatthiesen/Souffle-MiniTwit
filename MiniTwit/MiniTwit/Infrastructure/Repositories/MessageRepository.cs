@@ -54,6 +54,23 @@ public class MessageRepository : IMessageRepository {
             }).ToListAsync();
     }
 
+    /// <summary>
+    /// get all messages from a specific username
+    /// </summary>
+    /// <param name="userName"></param>
+    /// <returns></returns>
+    public Task<List<MessageDTO>> ReadByUserName(string userName) {
+        return _context.Users.Include(u => u.Messages)
+            .Where(u => u.UserName == userName)
+            .SelectMany(u => u.Messages)
+            .Select(m => new MessageDTO
+            {
+                Text = m.Text,
+                PubDate = m.PubDate,
+                AuthorName = m.Author.UserName
+            }).ToListAsync();
+    }
+
     public async Task<Option<MessageDTO>> AddMessage(CreateMessageDTO message) {
         var author = await _context.Users.FindAsync(message.AuthorId);
 

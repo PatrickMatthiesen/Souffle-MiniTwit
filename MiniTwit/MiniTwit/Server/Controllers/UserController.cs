@@ -24,7 +24,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{userName}")]
-    public async Task<List<MessageDTO>> GetAllMessages(string userName)
+    public async Task<ActionResult<List<MessageDTO>>> GetAllMessages(string userName)
     {
         return await _repository.ReadMessagesFromUserNameAsync(userName);
     }
@@ -46,7 +46,4 @@ public class UserController : ControllerBase
     {
         return await _repository.ReadMyTimelineAsync(userId);
     }
-
-
 }
-// username, httpget

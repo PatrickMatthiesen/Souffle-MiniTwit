@@ -19,6 +19,7 @@ public class MessageController : ControllerBase {
 
     [AllowAnonymous]
     [HttpGet]
+    [OutputCache(Duration = 5)] //cache the result for 10 seconds
     public async Task<ActionResult<List<MessageDTO>>> Get() {
         return await _messageRepository.ReadAll();
     }
@@ -30,9 +31,9 @@ public class MessageController : ControllerBase {
     }
 
     [AllowAnonymous]
-    [HttpGet("user/{userId}")]
-    public async Task<ActionResult<List<MessageDTO>>> GetMessagesByUserId(string userId) {
-        return await _messageRepository.ReadByUserId(userId);
+    [HttpGet("user/{userName}")]
+    public async Task<ActionResult<List<MessageDTO>>> GetMessagesByUserName(string userName) {
+        return await _messageRepository.ReadByUserName(userName);
     }
 
     [HttpPost("add")]

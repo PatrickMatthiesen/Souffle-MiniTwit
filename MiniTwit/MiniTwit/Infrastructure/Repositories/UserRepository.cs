@@ -180,7 +180,7 @@ public class UserRepository : IUserRepository
                        from m in u.Messages
                        select new MessageDTO { Text = m.Text, PubDate = m.PubDate, AuthorName = m.Author.UserName };
 
-        return user.Messages.Select(m => new MessageDTO { Text = m.Text, PubDate = m.PubDate, AuthorName = m.Author.UserName }).Concat(messages).ToList();
+        return user.Messages.Select(m => new MessageDTO { Text = m.Text, PubDate = m.PubDate, AuthorName = m.Author.UserName }).Concat(messages).OrderByDescending(m => m.PubDate).Take(100).Reverse().ToList();
     }
 
 
