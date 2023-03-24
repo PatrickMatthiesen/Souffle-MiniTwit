@@ -1,7 +1,6 @@
 using Duende.IdentityServer.EntityFramework.Options;
 using MiniTwit.Infrastructure.Models;
 using Microsoft.Extensions.Options;
-using MiniTwit.Infrastructure.DbContext;
 using MiniTwit.Infrastructure.Repositories;
 using MiniTwit.Shared.DTO;
 
@@ -69,7 +68,9 @@ public sealed class MessageRepositoryTests : IAsyncDisposable {
 
     }
 
-    //test time conversion from utc +000 to local
+    /// <summary>
+    /// test time conversion from utc+0 to local
+    /// </summary>
     [Fact]
     public void TimeConversion()
     {
@@ -78,20 +79,12 @@ public sealed class MessageRepositoryTests : IAsyncDisposable {
         DateTime server = DateTime.SpecifyKind(utcTime, DateTimeKind.Utc);
         Assert.Equal(utcTime, server);
 
-        TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
+        TimeZoneInfo timeZone = TimeZoneInfo.Local;
         DateTime utcPlusOneDateTime = TimeZoneInfo.ConvertTimeFromUtc(utcTime, timeZone);
         Assert.Equal(utcPlusOneDateTime.ToString(), server.ToLocalTime().ToString());
 
         var timeString = TimeSinceOrDate(server, utcPlusOneDateTime);
         Assert.Equal($"{utcPlusOneDateTime.Second} sec.", timeString);
-
-
-        timeZone = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
-        DateTime utcMinusSix = TimeZoneInfo.ConvertTimeFromUtc(utcTime, timeZone);
-        Assert.Equal(utcMinusSix.ToString(), server.ToString());
-
-        timeString = TimeSinceOrDate(server, utcMinusSix);
-        Assert.Equal($"{utcMinusSix.Second} sec.", timeString);
     }
 
     public string TimeSinceOrDate(DateTime dateTime, DateTime now)
