@@ -41,8 +41,8 @@ public class UserController : ControllerBase
         return await _repository.Follow(userId, nameToFollow).ToActionResult();
     }
 
-    [HttpPost("{userId}/my-timeline")]
-    public async Task<List<MessageDTO>> GetMyTimeline(string userId)
+    [HttpGet("{userId}/mytimeline")]
+    public async Task<ActionResult<List<MessageDTO>>> GetMyTimeline(string userId)
     {
         return await _repository.ReadMyTimelineAsync(userId);
     }
