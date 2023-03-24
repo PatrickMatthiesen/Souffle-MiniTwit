@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server.Tests", "Tests\Serve
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarks", "Tests\Benchmarks\Benchmarks.csproj", "{E4E85C61-80B1-4C3D-9CD0-2752B15246FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorEndToEnd.Tests", "Tests\BlazorEndToEnd.Tests\BlazorEndToEnd.Tests.csproj", "{90DAD418-E112-456F-BD9C-C84396358277}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{E4E85C61-80B1-4C3D-9CD0-2752B15246FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4E85C61-80B1-4C3D-9CD0-2752B15246FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4E85C61-80B1-4C3D-9CD0-2752B15246FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90DAD418-E112-456F-BD9C-C84396358277}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90DAD418-E112-456F-BD9C-C84396358277}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90DAD418-E112-456F-BD9C-C84396358277}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90DAD418-E112-456F-BD9C-C84396358277}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,6 +60,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{1F4E0166-F5A2-49C9-8EE4-98DFE03CD239} = {21E56AEA-B0B1-4006-861C-370EEF085CD1}
 		{E4E85C61-80B1-4C3D-9CD0-2752B15246FC} = {21E56AEA-B0B1-4006-861C-370EEF085CD1}
+		{90DAD418-E112-456F-BD9C-C84396358277} = {21E56AEA-B0B1-4006-861C-370EEF085CD1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4E02A138-12CE-4128-9B97-FEE1ACB9276E}
