@@ -109,7 +109,7 @@ public class UserRepository : IUserRepository
 
     public async Task<Response> UnFollowAsync(string userId, string targetName)
     {
-        var entity = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        var entity = await _context.Users.Include("Follows").FirstOrDefaultAsync(u => u.Id == userId);
 
         if (entity is null)
             return Response.NotFound;
@@ -158,7 +158,7 @@ public class UserRepository : IUserRepository
 
     public async Task<List<MessageDTO>> ReadMessagesFromUserNameAsync(string userName)
     {
-        var entity = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userName);
+        var entity = await _context.Users.Include("Messages").FirstOrDefaultAsync(u => u.UserName == userName);
 
         var messages = new List<MessageDTO>();
 
@@ -172,7 +172,9 @@ public class UserRepository : IUserRepository
 
     public async Task<List<MessageDTO>> ReadMyTimelineAsync(string id)
     {
-        var user = await _context.Users.Include("Follows.Messages").FirstOrDefaultAsync(u => u.Id == id);
+        var user = await _context.Users.Include("Messages").Include("Follows.Messages").FirstOrDefaultAsync(u => u.Id == id);
+
+        if (user is null) return null;
 
         var messages = from u in user.Follows
                        from m in u.Messages
