@@ -1,34 +1,46 @@
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Playwright;
-using Microsoft.Playwright.MSTest;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Text.RegularExpressions;
+
 
 namespace BlazorEndToEnd.Tests;
 
-public class RegisterAndLoginTests : PageTest, IClassFixture<CustomApiFactory> {
+public class RegisterAndLoginTests : IClassFixture<TestFixture> {
 
-    private readonly HttpClient _httpClient;
-    private readonly CustomApiFactory _customApiFactory;
-    private readonly string _address; 
+    //private readonly HttpClient _httpClient;
+    //private readonly CustomApiFactory _customApiFactory;
+    //private readonly string _address; 
 
-    public RegisterAndLoginTests(CustomApiFactory customApiFactory) {
-        _customApiFactory = customApiFactory;
-        _address = _customApiFactory.ClientOptions.BaseAddress.ToString();
-        //_customApiFactory.InitializeAsync().Wait();
-        _httpClient = _customApiFactory.CreateClient();
+    //public RegisterAndLoginTests(CustomApiFactory customApiFactory) {
+    //    _customApiFactory = customApiFactory;
+    //    _address = _customApiFactory.ClientOptions.BaseAddress.OriginalString;
+    //    //_customApiFactory.InitializeAsync().Wait();
+    //    _httpClient = _customApiFactory.CreateClient();
+    //}
+
+    private readonly IPage? Page;
+
+    public RegisterAndLoginTests(TestFixture fixture) {
+        Page = fixture.Page;
     }
 
     [Fact]
     public async Task Register() {
-        using var playwright = await Microsoft.Playwright.Playwright.CreateAsync();
-        await using var browser = await playwright.Chromium.LaunchAsync();
-        var Page = await browser.NewPageAsync();
+        //using var playwright = await Microsoft.Playwright.Playwright.CreateAsync();
+        //await using var browser = await playwright.Chromium.LaunchAsync();
+        //var Page = await browser.NewPageAsync();
 
-        await Page.GotoAsync($"{_address}Identity/Account/Register");
+        Xunit.Assert.NotNull(Page);
 
-        await Page.FillAsync("input[name='email']", "");
+        var responce = await Page.GotoAsync($"https://localhost:7048"); // /Identity/Account/Register
+        await Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
-        await Expect(Page).ToHaveURLAsync(new Regex(".*intro"));
+        Assert.NotNull(responce);
+        Assert.Contains(await Page.ContentAsync(), "<!doctype html>");
+
+        await Page.GetByPlaceholder("name@example.com").FillAsync("test@test.dk");
+        await Page.FillAsync("input[name='Input.Password']", "Test1234!");
+        await Page.FillAsync("input[name='Input.ConfirmPassword']", "Test1234!");
+        await Page.ClickAsync("button[type='submit']");
+
+        //await Expect(Page).ToHaveURLAsync(new Regex(".*intro"));
     }
 }
