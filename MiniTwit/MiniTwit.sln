@@ -17,6 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server.Tests", "Tests\Serve
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarks", "Tests\Benchmarks\Benchmarks.csproj", "{E4E85C61-80B1-4C3D-9CD0-2752B15246FC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "end-to-end", "end-to-end", "{47331363-5F3A-469F-8A94-A79BA8A3C5A5}"
+	ProjectSection(SolutionItems) = preProject
+		ui_test.py = ui_test.py
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +59,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{1F4E0166-F5A2-49C9-8EE4-98DFE03CD239} = {21E56AEA-B0B1-4006-861C-370EEF085CD1}
 		{E4E85C61-80B1-4C3D-9CD0-2752B15246FC} = {21E56AEA-B0B1-4006-861C-370EEF085CD1}
+		{47331363-5F3A-469F-8A94-A79BA8A3C5A5} = {21E56AEA-B0B1-4006-861C-370EEF085CD1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4E02A138-12CE-4128-9B97-FEE1ACB9276E}
