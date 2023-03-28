@@ -1,5 +1,7 @@
 # Service Level Agreement for MiniTwit API
 
+This document was co-written by OpenAI
+
 ## Introduction
 This Service Level Agreement (SLA) outlines the commitments made by Soufflé and the customer (referred to as "you" or "customer") for the use of our MiniTwit API (referred to as "the service"). This SLA defines the service scope, uptime commitment, maintenance and upgrade schedules, and response time. By using the service, you agree to the terms and conditions of this SLA.
 
