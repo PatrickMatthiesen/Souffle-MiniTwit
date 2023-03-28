@@ -50,7 +50,7 @@ builder.Host.UseSerilog((context, config) =>
     config
         .Enrich.FromLogContext()
         .WriteTo.Console()
-        .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
+        .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(builder.Configuration["Serilog:Uri"]))
         {
             AutoRegisterTemplate = true
         });

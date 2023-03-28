@@ -73,12 +73,13 @@ jobs:
           "docker stop minitwit-souffle &&
           docker rm minitwit-souffle &&
           docker pull $DOCKER_USERNAME/minitwit-souffle:latest &&
-          docker run -d --name minitwit-souffle -p 80:80 -e $CONNECTION_STRING $DOCKER_USERNAME/minitwit-souffle:latest"
+          docker run -d --name minitwit-souffle -p 80:80 -e $CONNECTION_STRING -e $SERILOG_URI $DOCKER_USERNAME/minitwit-souffle:latest"
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
+          SERILOG_URI: ${{ secrets.SERILOG_URI }}
 
       - name: Copy files for Monitoring
         run: |
