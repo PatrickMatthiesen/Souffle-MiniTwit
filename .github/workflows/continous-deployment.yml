@@ -101,6 +101,6 @@ jobs:
         run: |
           scp -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no docker-compose-logging.yml $SSH_USER@$SSH_HOST:docker
           ssh $SSH_USER@$SSH_HOST -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no "docker compose -f docker/docker-compose-logging.yml up -d"
-          env:
+        env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_DB_HOST }}
