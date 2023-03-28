@@ -4,17 +4,21 @@ using MiniTwit.Infrastructure.DbContext;
 using MiniTwit.Shared;
 using MiniTwit.Shared.DTO;
 using MiniTwit.Shared.IRepositories;
+using Prometheus;
 
 namespace MiniTwit.Infrastructure.Repositories;
 public class MessageRepository : IMessageRepository {
     private readonly ApplicationDbContext _context;
 
+    private static Counter _msgCounter = Metrics
+    .CreateCounter("total_msgs_in_db", "Number of messages in DB.");
+
     public MessageRepository(ApplicationDbContext context) {
         _context = context;
+        _msgCounter.IncTo(_context.Messages.Count());
     }
 
-    public Task<List<MessageDTO>> ReadAll()
-    {
+    public Task<List<MessageDTO>> ReadAll() {
         return _context.Messages.Select(m => new MessageDTO
         {
             Text = m.Text,
@@ -31,11 +35,13 @@ public class MessageRepository : IMessageRepository {
     public async Task<Option<MessageDTO>> ReadAsync(int id) {
         var message = await _context.Messages.FindAsync(id);
 
-        if (message is null) {
+        if (message is null)
+        {
             return null; // None type
         }
 
-        return new MessageDTO {
+        return new MessageDTO
+        {
             Text = message.Text,
             PubDate = message.PubDate,
             AuthorName = message.Author.UserName,
@@ -47,7 +53,8 @@ public class MessageRepository : IMessageRepository {
         return _context.Users.Include(u => u.Messages)
             .Where(u => u.Id == userId)
             .SelectMany(u => u.Messages)
-            .Select(m => new MessageDTO {
+            .Select(m => new MessageDTO
+            {
                 Text = m.Text,
                 PubDate = m.PubDate,
                 AuthorName = m.Author.UserName
@@ -74,11 +81,13 @@ public class MessageRepository : IMessageRepository {
     public async Task<Option<MessageDTO>> AddMessage(CreateMessageDTO message) {
         var author = await _context.Users.FindAsync(message.AuthorId);
 
-        if (author is null) {
+        if (author is null)
+        {
             return null;
         }
 
-        var createdMessage = await _context.Messages.AddAsync(new Message {
+        var createdMessage = await _context.Messages.AddAsync(new Message
+        {
             Text = message.Text,
             PubDate = DateTime.Now,
             Author = author,
@@ -86,7 +95,10 @@ public class MessageRepository : IMessageRepository {
         });
 
         await _context.SaveChangesAsync();
-        return new MessageDTO {
+        _msgCounter.Inc();
+
+        return new MessageDTO
+        {
             Id = createdMessage.Entity.Id,
             Text = createdMessage.Entity.Text,
             PubDate = createdMessage.Entity.PubDate,
