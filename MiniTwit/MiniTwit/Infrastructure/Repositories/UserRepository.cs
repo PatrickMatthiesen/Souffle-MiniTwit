@@ -14,6 +14,7 @@ public class UserRepository : IUserRepository {
     private static Counter _usrCounter = Metrics
         .CreateCounter("total_users", "Number of users in DB.");
 
+
     public UserRepository(ApplicationDbContext context) {
         _context = context;
         _usrCounter.IncTo(_context.Users.Count());
