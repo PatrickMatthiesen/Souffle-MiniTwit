@@ -6,6 +6,8 @@ using MiniTwit.Infrastructure.Models;
 using MiniTwit.Infrastructure.Repositories;
 using MiniTwit.Shared.IRepositories;
 using Prometheus;
+using Serilog;
+using Serilog.Sinks.Elasticsearch;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +43,18 @@ builder.Services.AddSwaggerGen(c => {
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISimRepository, SimRepository>();
+
+
+builder.Host.UseSerilog((context, config) =>
+{
+    config
+        .Enrich.FromLogContext()
+        .WriteTo.Console()
+        .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
+        {
+            AutoRegisterTemplate = true
+        });
+});
 
 var app = builder.Build();
 
