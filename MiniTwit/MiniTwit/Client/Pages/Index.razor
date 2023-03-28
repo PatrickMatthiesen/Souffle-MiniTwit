@@ -1,11 +1,11 @@
 ﻿@page "/"
-@inject IHttpClientFactory _httpFactory
+@inject IHttpClientFactory HttpFactory
 
 <PageTitle>Public Timeline</PageTitle>
 
 <AuthorizeView>
     <Authorized>
-        <NewMessageTextBox _messages="_messages" OnSend="@(() => StateHasChanged())" />
+        <NewMessageTextBox _messages="_messages" OnSend="@(StateHasChanged)" />
     </Authorized>
     <NotAuthorized>
     </NotAuthorized>
@@ -17,23 +17,67 @@
     </ChildContent>
 </ContentDisplay>
 
-
+@if (_messages is {Count: > 0 })
+{
+    <div class="pagination">
+        <button disabled="@(_pageNumber <= 1)" @onclick="PreviousPage">Previous</button>
+        <span>Page @_pageNumber @*of @_totalPages*@</span>
+        <button @onclick="NextPage">Next</button>
+        <label for="pageSize">Page Size:</label>
+        <select id="pageSize" @bind="@_pageSize" @onclick="Refresh" >
+            <option value="8">8</option>
+            <option value="16">16</option>
+            <option value="32">32</option>
+            <option value="64">64</option>
+        </select>
+    </div>
+}
 
 @code {
-    private List<MessageDTO> _messages;
-
-    private string _error;
+    private List<MessageDTO>? _messages;
+    private string? _error;
+    private int _pageNumber = 1;
+    private int _pageSize = 8;
+    // private int _totalPages;
 
     protected override async Task OnInitializedAsync()
     {
-        var client = _httpFactory.CreateClient("MiniTwit.UnAuth");
+        await LoadMessagesAsync();
+    }
 
-        var result = await client.GetAsync($"api/Message");
+    private async Task LoadMessagesAsync()
+    {
+        var client = HttpFactory.CreateClient("MiniTwit.UnAuth");
+        var requestUri = $"api/Message?pageNumber={_pageNumber}&pageSize={_pageSize}";
+
+        var result = await client.GetAsync(requestUri);
+        
         if (!result.IsSuccessStatusCode)
         {
             _error = "Something went wrong loading the timeline";
             return;
         }
-        _messages = await result.Content.ReadFromJsonAsync<List<MessageDTO>>();
+
+        var messages = await result.Content.ReadFromJsonAsync<List<MessageDTO>>();
+        // _totalPages = (int)Math.Ceiling((double)messages.Count / _pageSize);
+
+        _messages = messages!;
+    }
+
+    private async Task Refresh()
+    {
+        await LoadMessagesAsync();
+    }
+
+    private async Task PreviousPage()
+    {
+        _pageNumber--;
+        await LoadMessagesAsync();
+    }
+
+    private async Task NextPage()
+    {
+        _pageNumber++;
+        await LoadMessagesAsync();
     }
 }
