@@ -10,4 +10,9 @@ updates:
     directory: /
     schedule:
       interval: daily
-      
+
+allow:
+- dependency-type: "direct"
+  update-type: "minor"
+- dependency-type: "direct"
+  update-type: "patch"
