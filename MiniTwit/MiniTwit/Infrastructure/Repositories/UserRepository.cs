@@ -4,19 +4,23 @@ using MiniTwit.Infrastructure.Models;
 using MiniTwit.Shared;
 using MiniTwit.Shared.DTO;
 using MiniTwit.Shared.IRepositories;
+using Prometheus;
 
 namespace MiniTwit.Infrastructure.Repositories;
-public class UserRepository : IUserRepository
-{
+public class UserRepository : IUserRepository {
     private readonly ApplicationDbContext _context;
 
-    public UserRepository(ApplicationDbContext context)
-    {
+    // Prometheus counter metric
+    private static Counter _usrCounter = Metrics
+        .CreateCounter("total_users", "Number of users in DB.");
+
+
+    public UserRepository(ApplicationDbContext context) {
         _context = context;
+        _usrCounter.IncTo(_context.Users.Count());
     }
 
-    public async Task<(Response Response, string userId)> CreateAsync(UserCreateDTO user)
-    {
+    public async Task<(Response Response, string userId)> CreateAsync(UserCreateDTO user) {
         var entity = await _context.Users.FindAsync(user.Id);
         Response response;
 
@@ -32,7 +36,7 @@ public class UserRepository : IUserRepository
 
             await _context.AddAsync(entity);
             await _context.SaveChangesAsync();
-
+            _usrCounter.Inc(); // Prometheus metric
             response = Response.Created;
         }
         else
@@ -44,8 +48,7 @@ public class UserRepository : IUserRepository
     }
 
 
-    public async Task<(Response Response, UserDTO)> FindAsync(string userId)
-    {
+    public async Task<(Response Response, UserDTO)> FindAsync(string userId) {
         var entity = await _context.Users.FindAsync(userId);
         Response response;
 
@@ -62,8 +65,7 @@ public class UserRepository : IUserRepository
     }
 
 
-    public async Task<Response> UpdateAsync(UserUpdateDTO user)
-    {
+    public async Task<Response> UpdateAsync(UserUpdateDTO user) {
         var entity = await _context.Users.FindAsync(user.Id);
 
         if (entity is null)
@@ -83,8 +85,7 @@ public class UserRepository : IUserRepository
         }
     }
 
-    public async Task<Response> Follow(string userId, string targetName)
-    {
+    public async Task<Response> Follow(string userId, string targetName) {
         var entity = await _context.Users.Include("Follows").FirstOrDefaultAsync(u => u.Id == userId);
 
         if (entity is null)
@@ -107,8 +108,7 @@ public class UserRepository : IUserRepository
         return Response.NoContent;
     }
 
-    public async Task<Response> UnFollowAsync(string userId, string targetName)
-    {
+    public async Task<Response> UnFollowAsync(string userId, string targetName) {
         var entity = await _context.Users.Include("Follows").FirstOrDefaultAsync(u => u.Id == userId);
 
         if (entity is null)
@@ -131,8 +131,7 @@ public class UserRepository : IUserRepository
         return Response.NoContent;
     }
 
-    public async Task<List<UserDTO>> ReadFollowsAsync(string Id)
-    {
+    public async Task<List<UserDTO>> ReadFollowsAsync(string Id) {
         var entity = await _context.Users.FindAsync(Id);
 
         var returnList = new List<UserDTO>();
@@ -145,8 +144,7 @@ public class UserRepository : IUserRepository
         return returnList;
     }
 
-    public async Task<List<UserDTO>> ReadFollowsAsyncQuery(string Id)
-    {
+    public async Task<List<UserDTO>> ReadFollowsAsyncQuery(string Id) {
         var entity = await _context.Users.FindAsync(Id);
 
         return
@@ -156,8 +154,7 @@ public class UserRepository : IUserRepository
 
     }
 
-    public async Task<List<MessageDTO>> ReadMessagesFromUserNameAsync(string userName)
-    {
+    public async Task<List<MessageDTO>> ReadMessagesFromUserNameAsync(string userName) {
         var entity = await _context.Users.Include("Messages").FirstOrDefaultAsync(u => u.UserName == userName);
 
         var messages = new List<MessageDTO>();
@@ -170,11 +167,11 @@ public class UserRepository : IUserRepository
         return messages;
     }
 
-    public async Task<List<MessageDTO>> ReadMyTimelineAsync(string id)
-    {
+    public async Task<List<MessageDTO>> ReadMyTimelineAsync(string id) {
         var user = await _context.Users.Include("Messages").Include("Follows.Messages").FirstOrDefaultAsync(u => u.Id == id);
 
-        if (user is null) return null;
+        if (user is null)
+            return null;
 
         var messages = from u in user.Follows
                        from m in u.Messages
@@ -185,8 +182,7 @@ public class UserRepository : IUserRepository
 
 
 
-    public async Task<Response> DeleteAsync(string userId, bool force = false)
-    {
+    public async Task<Response> DeleteAsync(string userId, bool force = false) {
         var entity = await _context.Users.FindAsync(userId);
 
         Response response;
