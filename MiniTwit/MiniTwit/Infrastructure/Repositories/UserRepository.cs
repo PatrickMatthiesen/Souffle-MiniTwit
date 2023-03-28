@@ -6,19 +6,24 @@ using MiniTwit.Shared.DTO;
 using MiniTwit.Shared.IRepositories;
 
 namespace MiniTwit.Infrastructure.Repositories;
-public class UserRepository : IUserRepository {
+public class UserRepository : IUserRepository
+{
     private readonly ApplicationDbContext _context;
 
-    public UserRepository(ApplicationDbContext context) {
+    public UserRepository(ApplicationDbContext context)
+    {
         _context = context;
     }
 
-    public async Task<(Response Response, string userId)> CreateAsync(UserCreateDTO user) {
+    public async Task<(Response Response, string userId)> CreateAsync(UserCreateDTO user)
+    {
         var entity = await _context.Users.FindAsync(user.Id);
         Response response;
 
-        if (entity is null) {
-            entity = new ApplicationUser {
+        if (entity is null)
+        {
+            entity = new ApplicationUser
+            {
                 UserName = user.Name,
                 Email = user.Email,
                 Messages = new List<Message>(),
@@ -30,7 +35,8 @@ public class UserRepository : IUserRepository {
 
             response = Response.Created;
         }
-        else {
+        else
+        {
             response = Response.Conflict;
         }
         return (response, entity.Id);
@@ -38,28 +44,34 @@ public class UserRepository : IUserRepository {
     }
 
 
-    public async Task<(Response Response, UserDTO)> FindAsync(string userId) {
+    public async Task<(Response Response, UserDTO)> FindAsync(string userId)
+    {
         var entity = await _context.Users.FindAsync(userId);
         Response response;
 
-        if (entity is null) {
+        if (entity is null)
+        {
             response = Response.NotFound;
             return (response, null);
         }
-        else {
+        else
+        {
             response = Response.OK;
             return (response, new UserDTO(userId, entity.UserName, entity.Email));
         }
     }
 
 
-    public async Task<Response> UpdateAsync(UserUpdateDTO user) {
+    public async Task<Response> UpdateAsync(UserUpdateDTO user)
+    {
         var entity = await _context.Users.FindAsync(user.Id);
 
-        if (entity is null) {
+        if (entity is null)
+        {
             return Response.NotFound;
         }
-        else {
+        else
+        {
             entity.Id = user.Id;
             entity.UserName = user.Name;
             entity.Email = user.Email;
@@ -71,17 +83,22 @@ public class UserRepository : IUserRepository {
         }
     }
 
-    public async Task<Response> Follow(string userId, string targetName) {
+    public async Task<Response> Follow(string userId, string targetName)
+    {
         var entity = await _context.Users.Include("Follows").FirstOrDefaultAsync(u => u.Id == userId);
 
-        if (entity is null) return Response.NotFound;
-        if (entity.UserName == targetName) return Response.Conflict;
+        if (entity is null)
+            return Response.NotFound;
+        if (entity.UserName == targetName)
+            return Response.Conflict;
 
         var target = await _context.Users.FirstOrDefaultAsync(u => u.UserName == targetName);
 
-        if (target is null) return Response.NotFound;
+        if (target is null)
+            return Response.NotFound;
 
-        if (entity.Follows.Contains(target)) {
+        if (entity.Follows.Contains(target))
+        {
             return Response.Conflict;
         }
 
@@ -90,16 +107,22 @@ public class UserRepository : IUserRepository {
         return Response.NoContent;
     }
 
-    public async Task<Response> UnFollow(string userId, string targetName) {
-        var entity = await _context.Users.FindAsync(userId);
+    public async Task<Response> UnFollowAsync(string userId, string targetName)
+    {
+        var entity = await _context.Users.Include("Follows").FirstOrDefaultAsync(u => u.Id == userId);
 
-        if (entity is null) return Response.NotFound;
+        if (entity is null)
+            return Response.NotFound;
+        if (entity.UserName == targetName)
+            return Response.Conflict;
 
         var target = entity.Follows.FirstOrDefault(f => f.UserName == targetName);
 
-        if (target is null) return Response.NotFound;
+        if (target is null)
+            return Response.NotFound;
 
-        if (entity.Follows.Contains(target)) {
+        if (!entity.Follows.Contains(target))
+        {
             return Response.NotFound;
         }
 
@@ -108,40 +131,72 @@ public class UserRepository : IUserRepository {
         return Response.NoContent;
     }
 
-    public async Task<List<UserDTO>> ReadFollowsAsync(string Id) {
+    public async Task<List<UserDTO>> ReadFollowsAsync(string Id)
+    {
         var entity = await _context.Users.FindAsync(Id);
 
         var returnList = new List<UserDTO>();
 
-        foreach (var f in entity.Follows) {
+        foreach (var f in entity.Follows)
+        {
             returnList.Add(new UserDTO(f.Id, f.UserName, f.Email));
         }
 
         return returnList;
     }
 
-    public async Task<List<MessageDTO>> ReadMessagesFromUserIdAsync(string Id) {
+    public async Task<List<UserDTO>> ReadFollowsAsyncQuery(string Id)
+    {
         var entity = await _context.Users.FindAsync(Id);
+
+        return
+            (from u in _context.Users
+             where u.Id == Id
+             select new UserDTO(u.Id, u.UserName, u.Email)).ToList();
+
+    }
+
+    public async Task<List<MessageDTO>> ReadMessagesFromUserNameAsync(string userName)
+    {
+        var entity = await _context.Users.Include("Messages").FirstOrDefaultAsync(u => u.UserName == userName);
 
         var messages = new List<MessageDTO>();
 
-        foreach (var m in entity.Messages) {
+        foreach (var m in entity.Messages)
+        {
             messages.Add(new MessageDTO { Text = m.Text, PubDate = m.PubDate, AuthorName = m.Author.UserName });
         }
 
         return messages;
     }
 
+    public async Task<List<MessageDTO>> ReadMyTimelineAsync(string id)
+    {
+        var user = await _context.Users.Include("Messages").Include("Follows.Messages").FirstOrDefaultAsync(u => u.Id == id);
 
-    public async Task<Response> DeleteAsync(string userId, bool force = false) {
+        if (user is null) return null;
+
+        var messages = from u in user.Follows
+                       from m in u.Messages
+                       select new MessageDTO { Text = m.Text, PubDate = m.PubDate, AuthorName = m.Author.UserName };
+
+        return user.Messages.Select(m => new MessageDTO { Text = m.Text, PubDate = m.PubDate, AuthorName = m.Author.UserName }).Concat(messages).OrderByDescending(m => m.PubDate).Take(100).Reverse().ToList();
+    }
+
+
+
+    public async Task<Response> DeleteAsync(string userId, bool force = false)
+    {
         var entity = await _context.Users.FindAsync(userId);
 
         Response response;
 
-        if (entity is null) {
+        if (entity is null)
+        {
             response = Response.NotFound;
         }
-        else {
+        else
+        {
             _context.Users.Remove(entity);
             await _context.SaveChangesAsync();
 

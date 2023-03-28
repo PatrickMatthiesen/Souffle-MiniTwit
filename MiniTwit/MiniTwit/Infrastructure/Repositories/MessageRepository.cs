@@ -23,6 +23,11 @@ public class MessageRepository : IMessageRepository {
         }).OrderByDescending(m => m.PubDate).Take(100).Reverse().ToListAsync();
     }
 
+    /// <summary>
+    /// gets a message by id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public async Task<Option<MessageDTO>> ReadAsync(int id) {
         var message = await _context.Messages.FindAsync(id);
 
@@ -43,6 +48,23 @@ public class MessageRepository : IMessageRepository {
             .Where(u => u.Id == userId)
             .SelectMany(u => u.Messages)
             .Select(m => new MessageDTO {
+                Text = m.Text,
+                PubDate = m.PubDate,
+                AuthorName = m.Author.UserName
+            }).ToListAsync();
+    }
+
+    /// <summary>
+    /// get all messages from a specific username
+    /// </summary>
+    /// <param name="userName"></param>
+    /// <returns></returns>
+    public Task<List<MessageDTO>> ReadByUserName(string userName) {
+        return _context.Users.Include(u => u.Messages)
+            .Where(u => u.UserName == userName)
+            .SelectMany(u => u.Messages)
+            .Select(m => new MessageDTO
+            {
                 Text = m.Text,
                 PubDate = m.PubDate,
                 AuthorName = m.Author.UserName

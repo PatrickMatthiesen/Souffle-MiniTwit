@@ -11,6 +11,7 @@
             <AuthorizeView>
                 <Authorized>
                     <button class="text-primary text-body m-2 rounded" @onclick="() => FollowUser(message.AuthorName)" >Follow</button>
+                    <button class="text-primary text-body m-2 rounded" @onclick="() => UnFollowUser(message.AuthorName)" >UnFollow</button>
                 </Authorized>
             </AuthorizeView>
         </div>
@@ -24,13 +25,11 @@
 
     public string TimeSinceOrDate(DateTime dateTime)
     {
-        TimeSpan ts = DateTime.Now - dateTime.AddHours(1.0);
-        
-        Console.WriteLine("TimeStamp: " + ts.ToString());
+        TimeSpan ts = DateTime.Now - dateTime.ToLocalTime();
 
         return ts switch
         {
-            _ when ts.TotalDays >= 7 => ts.ToString("MM dd, yyyy"),
+            _ when ts.TotalDays >= 7 => dateTime.ToString("d MMM yyyy"),
             _ when ts.TotalHours >= 24 => $"{(int)Math.Floor(ts.TotalDays)} d.",
             _ when ts.TotalMinutes >= 60 => $"{(int)Math.Floor(ts.TotalHours)} h.",
             _ when ts.TotalSeconds >= 60 => $"{(int)Math.Floor(ts.TotalMinutes)} min.",
@@ -48,4 +47,16 @@
             // TODO: do something so the button says unfollow and change the logic to unfollow the user
         }
     }
+
+    private async void UnFollowUser(string username) 
+    {
+        var currentUser = await _authStateProvider.GetUserIdAsync();
+        var result = await _http.DeleteAsync($"api/User/{currentUser}/unfollow/{username}");
+        if (result.IsSuccessStatusCode) 
+        {
+            Console.WriteLine($"UnFollow of {username} was a success");
+        }
+
+    }
+
 }

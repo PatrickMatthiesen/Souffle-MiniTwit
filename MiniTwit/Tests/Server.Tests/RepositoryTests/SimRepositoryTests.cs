@@ -54,6 +54,45 @@ public sealed class SimRepositoryTests : IAsyncDisposable {
         Assert.Equal(1, latest.latest);
     }
 
+    // test that adds three users and have them follow each other
+    [Fact]
+    public async Task RegisterUsers_And_Follow_Then_CheckFollows()
+    {
+        var expected = Response.NoContent;
+        var user1 = new SimUserDTO { userName = "Asger" };
+        var user2 = new SimUserDTO { userName = "Kure" };
+        var user3 = new SimUserDTO { userName = "Rasmus" };
+        var actual = await _repository.RegisterUser(user1, 0);
+        Assert.Equal(expected, actual);
+        actual = await _repository.RegisterUser(user2, 1);
+        Assert.Equal(expected, actual);
+        actual = await _repository.RegisterUser(user3, 2);
+        Assert.Equal(expected, actual);
+
+        var response = await _repository.CreateOrRemoveFollower(user1.userName, user2.userName, null, true);
+        Assert.Equal(expected, response);
+        response = await _repository.CreateOrRemoveFollower(user1.userName, user3.userName, null, true);
+        Assert.Equal(expected, response);
+        response = await _repository.CreateOrRemoveFollower(user2.userName, user1.userName, null, true);
+        Assert.Equal(expected, response);
+        response = await _repository.CreateOrRemoveFollower(user2.userName, user3.userName, null, true); 
+        Assert.Equal(expected, response);
+        response = await _repository.CreateOrRemoveFollower(user3.userName, user1.userName, null, true);
+        Assert.Equal(expected, response);
+        response = await _repository.CreateOrRemoveFollower(user3.userName, user2.userName, null, true);
+        Assert.Equal(expected, response);
+        
+        var follows = await _repository.GetFollows("Asger");
+        Assert.Equal(2, follows.Count);
+        Assert.Equal(user2.userName, follows[0].Name);
+        Assert.Equal(user3.userName, follows[1].Name);
+        follows = await _repository.GetFollows("Rasmus");
+        Assert.Equal(2, follows.Count);
+        follows = await _repository.GetFollows("Kure");
+        Assert.Equal(2, follows.Count);
+    }
+
+
     public async ValueTask DisposeAsync() {
         await _context.DisposeAsync();
         await _connection.DisposeAsync();

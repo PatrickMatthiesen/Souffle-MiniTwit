@@ -143,7 +143,7 @@ public sealed class UserRepositoryTests : IAsyncDisposable {
         var (response2, targetId) = await _repository.CreateAsync(targetFollower);
 
         var followResponse = await _repository.Follow(followerId, targetId);
-        var unfollowResponse = await _repository.UnFollow(followerId, targetFollower.Name);
+        var unfollowResponse = await _repository.UnFollowAsync(followerId, targetFollower.Name);
 
         var result = await _repository.ReadFollowsAsync(followerId);
         var expectedList = new List<UserDTO> { };

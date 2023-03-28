@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using MiniTwit.Server.Util;
 using MiniTwit.Shared.DTO;
 using MiniTwit.Shared.IRepositories;
@@ -18,19 +19,21 @@ public class MessageController : ControllerBase {
 
     [AllowAnonymous]
     [HttpGet]
+    [OutputCache(Duration = 5)] //cache the result for 10 seconds
     public async Task<ActionResult<List<MessageDTO>>> Get() {
         return await _messageRepository.ReadAll();
     }
 
     [HttpGet("{id}")]
+    [OutputCache]
     public async Task<ActionResult<MessageDTO>> GetMessageById(int id) {
         return (await _messageRepository.ReadAsync(id)).ToActionResult();
     }
 
     [AllowAnonymous]
-    [HttpGet("user/{userId}")]
-    public async Task<ActionResult<List<MessageDTO>>> GetMessagesByUserId(string userId) {
-        return await _messageRepository.ReadByUserId(userId);
+    [HttpGet("user/{userName}")]
+    public async Task<ActionResult<List<MessageDTO>>> GetMessagesByUserName(string userName) {
+        return await _messageRepository.ReadByUserName(userName);
     }
 
     [HttpPost("add")]
