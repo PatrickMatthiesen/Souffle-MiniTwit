@@ -1,6 +1,6 @@
-﻿using MiniTwit.Infrastructure.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MiniTwit.Infrastructure.DbContext;
+using MiniTwit.Infrastructure.Models;
 using MiniTwit.Shared;
 using MiniTwit.Shared.DTO;
 using MiniTwit.Shared.IRepositories;
@@ -11,7 +11,7 @@ public class MessageRepository : IMessageRepository {
     private readonly ApplicationDbContext _context;
 
     private static Counter _msgCounter = Metrics
-    .CreateCounter("total_msgs_in_db", "Number of messages in DB.");
+        .CreateCounter("total_msgs_in_db", "Number of messages in DB.");
 
     public MessageRepository(ApplicationDbContext context) {
         _context = context;
