@@ -136,11 +136,17 @@ public class UserRepository : IUserRepository {
 
         var returnList = new List<UserDTO>();
 
-        foreach (var f in entity.Follows)
+        if (entity == null)
         {
-            returnList.Add(new UserDTO(f.Id, f.UserName, f.Email));
+            throw new Exception($"User with Id {Id} not found.");
         }
 
+        foreach (var f in entity.Follows)
+        {
+            Console.WriteLine(f.UserName + ", " + f.Email);
+            returnList.Add(new UserDTO(f.Id, f.UserName, f.Email));
+        }
+        
         return returnList;
     }
 

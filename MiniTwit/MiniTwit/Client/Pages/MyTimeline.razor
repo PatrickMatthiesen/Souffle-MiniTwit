@@ -15,16 +15,27 @@
 @code {
     private List<MessageDTO> _messages;
 
+    private List<UserDTO> _followers;
+
     private string _error;
 
     protected override async Task OnInitializedAsync() {
         var userId = await _authStateProvider.GetUserIdAsync();
         var result = await _http.GetAsync($"api/User/{userId}/mytimeline");
+        var followers = await _http.GetAsync($"api/User/{userId}/get-followers");
         if (!result.IsSuccessStatusCode)
         {
             _error = "Something went wrong loading the timeline";
             return;
         }
+        if (!followers.IsSuccessStatusCode) 
+        {
+            _error = "Something went wrong loading users followers";
+            return;
+        }
         _messages = await result.Content.ReadFromJsonAsync<List<MessageDTO>>();
+        _followers = await followers.Content.ReadFromJsonAsync<List<UserDTO>>();
     }
+
+
 }
