@@ -143,7 +143,6 @@ public class UserRepository : IUserRepository {
 
         foreach (var f in entity.Follows)
         {
-            Console.WriteLine(f.UserName + ", " + f.Email);
             returnList.Add(new UserDTO(f.Id, f.UserName, f.Email));
         }
 
