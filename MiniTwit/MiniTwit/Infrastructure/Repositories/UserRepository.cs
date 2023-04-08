@@ -153,29 +153,17 @@ public class UserRepository : IUserRepository {
     public async Task<List<UserDTO>> ReadFollowsAsyncQuery(string Id) {
         var entity = await _context.Users.FindAsync(Id);
 
+        if (entity == null)
+        {
+            throw new NullReferenceException("$User with Id {Id} not found.");
+        }
+
         return
             (from u in _context.Users
              where u.Id == Id
              from f in u.Follows
              select new UserDTO(f.Id, f.UserName, f.Email)).ToList();
 
-    }
-
-    public async Task<List<UserDTO>> ReadFollowsAsyncTest(string Id) {
-        var entity = await _context.Users.FindAsync(Id);
-        var follows = new List<UserDTO>();
-
-        if (entity == null)
-        {
-            throw new NullReferenceException("$User with Id {Id} not found.");
-        }
-
-        foreach (var f in entity.Follows)
-        {
-            follows.Append(new UserDTO(f.Id, f.UserName, f.Email));
-        }
-
-        return follows;
     }
 
     public async Task<List<MessageDTO>> ReadMessagesFromUserNameAsync(string userName) {
