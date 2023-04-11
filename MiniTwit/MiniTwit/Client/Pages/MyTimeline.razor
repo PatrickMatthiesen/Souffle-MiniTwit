@@ -4,8 +4,11 @@
 @inject AuthenticationStateProvider _authStateProvider
 @attribute [Authorize]
 
-<NewMessageTextBox _messages="_messages" OnSend="@(() => StateHasChanged())" />
 
+
+
+<FollowerView Followers="_followers" OnUnFollow="@(() => StateHasChanged())" />
+<NewMessageTextBox _messages="_messages" OnSend="@(() => StateHasChanged())" />
 <ContentDisplay text="Loading ..." obj="_messages" Error="@_error">
     <ChildContent>
         <Timeline Messages="_messages" />
@@ -23,6 +26,7 @@
         var userId = await _authStateProvider.GetUserIdAsync();
         var result = await _http.GetAsync($"api/User/{userId}/mytimeline");
         var followers = await _http.GetAsync($"api/User/{userId}/get-followers");
+
         if (!result.IsSuccessStatusCode)
         {
             _error = "Something went wrong loading the timeline";
