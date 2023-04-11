@@ -3,6 +3,7 @@
 # Vulnerabilities
 
 ## Risk: High
+
 ### 1. SQL Injection (MsSQL) might be possible:
 The Zed attack, was able to use this in the Post query:
 ~~~
@@ -26,7 +27,7 @@ which caused the request to take [12.051] milliseconds, when the original unmodi
 
 
 ## Risk: Medium
-### Abscence of Anti-CSRF Tokens
+### 1. Abscence of Anti-CSRF Tokens
 The Zed attack found no Anti-CSRF tokens in a HTML submission form. A cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim.
 Present in:
 ~~~
@@ -53,13 +54,13 @@ The underlying cause is application functionality using predictable URL/form act
 ~~~
 The nature of the attack is that CSRF exploits the trust that a web site has for a user.
 
-### Content Security Policy (CSP) Header Not Set
+### C2. ontent Security Policy (CSP) Header Not Set
 Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware
 
 ### Solution (CSP): 
     Ensure that your web server, application server, load balancer, etc. is configured to set the     Content-Security-Policy header.
 
-### Missing Anti-clickjacking Header
+### 3. Missing Anti-clickjacking Header
 The response does not include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options to protect against 'ClickJacking' attacks.
 
 ### Solution (Anti-clickjacking)
