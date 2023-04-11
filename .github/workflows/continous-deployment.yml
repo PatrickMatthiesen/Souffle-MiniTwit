@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -56,7 +56,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Configure SSH
         run: |
@@ -68,30 +68,40 @@ jobs:
 
       - name: Deploy Server
         run: >
-          ssh $SSH_USER@$SSH_HOST
+          ssh "$SSH_USER"@"$SSH_HOST"
           -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
           "docker stop minitwit-souffle &&
           docker rm minitwit-souffle &&
-          docker pull $DOCKER_USERNAME/minitwit-souffle:latest &&
-          docker run -d --name minitwit-souffle -p 5000:80 $DOCKER_USERNAME/minitwit-souffle:latest"
+          docker pull ""$DOCKER_USERNAME""/minitwit-souffle:latest &&
+          docker run -d --name minitwit-souffle -p 80:80 -e ""$CONNECTION_STRING"" -e ""$SERILOG_URI"" ""$DOCKER_USERNAME""/minitwit-souffle:latest"
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
+          SERILOG_URI: ${{ secrets.SERILOG_URI }}
 
       - name: Copy files for Monitoring
         run: |
-          scp -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no docker-compose-monitoring.yml $SSH_USER@$SSH_HOST:docker
-          scp -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no prometheus.yml $SSH_USER@$SSH_HOST:docker
+          scp -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no docker-compose-monitoring.yml "$SSH_USER"@"$SSH_HOST":docker
+          scp -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no prometheus.yml "$SSH_USER"@"$SSH_HOST":docker
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_DB_HOST }}
 
       - name: Deploy Monitoring
         run: >
-          ssh $SSH_USER@$SSH_HOST
+          ssh "$SSH_USER"@"$SSH_HOST"
           -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
           "docker compose -f docker/docker-compose-monitoring.yml up -d"
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_DB_HOST }}
+
+      - name: Copy files for Logging and Deploy
+        run: |
+          scp -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no docker-compose-logging.yml "$SSH_USER"@"$SSH_HOST":docker
+          ssh "$SSH_USER"@"$SSH_HOST" -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no "docker compose -f docker/docker-compose-logging.yml up -d"
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_DB_HOST }}

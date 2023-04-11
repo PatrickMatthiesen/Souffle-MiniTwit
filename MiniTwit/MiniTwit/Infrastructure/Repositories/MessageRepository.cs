@@ -16,7 +16,7 @@ public class MessageRepository : IMessageRepository {
 
     public MessageRepository(ApplicationDbContext context) {
         _context = context;
-        _msgCounter.IncTo(_context.Messages.Count());
+        //_msgCounter.IncTo(_context.Messages.Count()); // this is not working TODO
     }
 
     public Task<List<MessageDTO>> ReadAllByPage(int pageNumber, int pageSize) {

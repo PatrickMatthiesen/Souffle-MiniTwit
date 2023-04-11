@@ -46,4 +46,11 @@ public class UserController : ControllerBase
     {
         return await _repository.ReadMyTimelineAsync(userId);
     }
+
+    [HttpGet("{userId}/get-followers")]
+    public async Task<ActionResult<List<UserDTO>>> GetUsersFollowers(string userId)
+    {
+        return await _repository.ReadFollowsAsyncQuery(userId);
+    }
+
 }

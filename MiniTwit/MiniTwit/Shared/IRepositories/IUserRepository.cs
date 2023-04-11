@@ -9,6 +9,7 @@ public interface IUserRepository
     Task<(Response Response, UserDTO)> FindAsync(string userId);
     Task<Response> UpdateAsync(UserUpdateDTO user);
     Task<List<UserDTO>> ReadFollowsAsync(string Id);
+    Task<List<UserDTO>> ReadFollowsAsyncQuery(string Id);
     Task<Response> UnFollowAsync(string Id_own, string Id_target);
     Task<Response> Follow(string Id_own, string Id_target);
     Task<List<MessageDTO>> ReadMessagesFromUserNameAsync(string userName);
