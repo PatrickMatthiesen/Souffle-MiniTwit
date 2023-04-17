@@ -1,0 +1,76 @@
+@inject HttpClient _http
+@inject AuthenticationStateProvider _authStateProvider
+
+
+@if (Followers != null && Followers.Count > 0)
+{
+
+<div class="container mt-4" >
+    <h2>Followers</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var follower in Followers)
+            {
+                <tr class="d-flex justify-content-between">
+                    <div>@follower.Name</div>
+                    <div>
+                        <button class="btn bg-primary text-white m-2 rounded"
+                        @onclick="() => SendUnFollow(follower)" > UnFollow
+                        </button>
+                    </div>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+}
+else
+{
+    <p>No followers found.</p>
+}
+
+
+
+@code {
+    // style="max-width: 260px; max-height: 100px;
+    [Parameter]
+    public required List<UserDTO> Followers { get; set; }
+    [Parameter]
+    public EventCallback<Task> OnUnFollow { get; set; }
+
+    private string _error;
+
+    protected override async Task OnInitializedAsync() {
+
+        var userId = await _authStateProvider.GetUserIdAsync();
+        var followers = await _http.GetAsync($"api/User/{userId}/get-followers");
+
+        if (!followers.IsSuccessStatusCode) 
+        {
+            _error = "Something went wrong loading users followers";
+            return;
+        }
+
+        Followers = await followers.Content.ReadFromJsonAsync<List<UserDTO>>();
+    }
+
+    // Code duplication ! :(
+    protected async void SendUnFollow(UserDTO user) 
+    {
+        var currentUser = await _authStateProvider.GetUserIdAsync();
+        var result = await _http.DeleteAsync($"api/User/{currentUser}/unfollow/{user.Name}");
+        if (!result.IsSuccessStatusCode) 
+        {
+            Console.WriteLine($"UnFollow of {user.Name} was unsuccessfull");
+            return;
+        }
+        Followers.Remove(user);
+
+        await OnUnFollow.InvokeAsync();        
+    }
+}

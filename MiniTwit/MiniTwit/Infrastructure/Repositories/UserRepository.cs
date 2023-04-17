@@ -143,20 +143,26 @@ public class UserRepository : IUserRepository {
 
         foreach (var f in entity.Follows)
         {
-            Console.WriteLine(f.UserName + ", " + f.Email);
             returnList.Add(new UserDTO(f.Id, f.UserName, f.Email));
         }
-        
+
         return returnList;
     }
+
 
     public async Task<List<UserDTO>> ReadFollowsAsyncQuery(string Id) {
         var entity = await _context.Users.FindAsync(Id);
 
+        if (entity == null)
+        {
+            throw new NullReferenceException("$User with Id {Id} not found.");
+        }
+
         return
             (from u in _context.Users
              where u.Id == Id
-             select new UserDTO(u.Id, u.UserName, u.Email)).ToList();
+             from f in u.Follows
+             select new UserDTO(f.Id, f.UserName, f.Email)).ToList();
 
     }
 
