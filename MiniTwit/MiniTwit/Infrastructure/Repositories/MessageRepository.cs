@@ -9,6 +9,7 @@ using Prometheus;
 namespace MiniTwit.Infrastructure.Repositories;
 public class MessageRepository : IMessageRepository {
     private readonly ApplicationDbContext _context;
+    private const int DefaultPageSize = 25;
 
     private static Counter _msgCounter = Metrics
         .CreateCounter("total_msgs_in_db", "Number of messages in DB.");
@@ -16,6 +17,19 @@ public class MessageRepository : IMessageRepository {
     public MessageRepository(ApplicationDbContext context) {
         _context = context;
         //_msgCounter.IncTo(_context.Messages.Count()); // this is not working TODO
+    }
+
+    public Task<List<MessageDTO>> ReadAllByPage(int pageNumber, int pageSize) {
+        var messages = _context.Messages.Select(m => new MessageDTO
+            {
+                Text = m.Text, PubDate = m.PubDate, AuthorName = m.Author.UserName
+            }).OrderByDescending(m => m.PubDate)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Reverse()
+            .ToListAsync();
+
+        return messages;
     }
 
     public Task<List<MessageDTO>> ReadAll() {

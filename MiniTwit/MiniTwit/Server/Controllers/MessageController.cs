@@ -16,12 +16,13 @@ public class MessageController : ControllerBase {
     public MessageController(IMessageRepository messageRepository) {
         _messageRepository = messageRepository;
     }
-
+    
+    
     [AllowAnonymous]
     [HttpGet]
     [OutputCache(Duration = 5)] //cache the result for 10 seconds
-    public async Task<ActionResult<List<MessageDTO>>> Get() {
-        return await _messageRepository.ReadAll();
+    public async Task<ActionResult<List<MessageDTO>>> GetByPage(int pageNumber, int pageSize) {
+        return await _messageRepository.ReadAllByPage(pageNumber, pageSize);
     }
 
     [HttpGet("{id}")]

@@ -1,11 +1,11 @@
 ﻿@page "/"
-@inject IHttpClientFactory _httpFactory
+@inject IHttpClientFactory HttpFactory
 
 <PageTitle>Public Timeline</PageTitle>
 
 <AuthorizeView>
     <Authorized>
-        <NewMessageTextBox _messages="_messages" OnSend="@(() => StateHasChanged())" />
+        <NewMessageTextBox _messages="_messages" OnSend="@(StateHasChanged)" />
     </Authorized>
     <NotAuthorized>
     </NotAuthorized>
@@ -14,26 +14,77 @@
 <ContentDisplay text="Loading ..." obj="_messages" Error="@_error">
     <ChildContent>
         <Timeline Messages="_messages" />
+
+        <div class="pagination m-3 d-flex">
+            <button class="btn bg-primary text-white" disabled="@(PageNumber <= 1)" @onclick="PreviousPage">Prev</button>
+            <span class="m-2">Page @PageNumber</span>
+            <button class="btn bg-primary text-white" @onclick="NextPage">Next</button>
+            <div class="ms-auto d-flex align-items-center">
+                <label for="pageSize" class="">Page Size:</label>
+            </div>
+            <select id="pageSize" class="m-lg-1 form-select w-auto" @bind="@PageSize" @onclick="Refresh">
+                <option value="8">8</option>
+                <option value="16">16</option>
+                <option value="32">32</option>
+                <option value="64">64</option>
+            </select>
+        </div>
     </ChildContent>
 </ContentDisplay>
 
-
-
 @code {
-    private List<MessageDTO> _messages;
+    private List<MessageDTO>? _messages;
+    private string? _error;
 
-    private string _error;
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "page")]
+    public int? PageNumber { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "size")]
+    public int? PageSize { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        var client = _httpFactory.CreateClient("MiniTwit.UnAuth");
+        //set default values if not supplied from query
+        PageNumber = PageNumber ?? 1;
+        PageSize = PageSize ?? 8;
 
-        var result = await client.GetAsync($"api/Message");
+        await LoadMessagesAsync();
+    }
+
+    private async Task LoadMessagesAsync()
+    {
+        var client = HttpFactory.CreateClient("MiniTwit.UnAuth");
+        var requestUri = $"api/Message?pageNumber={PageNumber}&pageSize={PageSize}";
+
+        var result = await client.GetAsync(requestUri);
+        
         if (!result.IsSuccessStatusCode)
         {
             _error = "Something went wrong loading the timeline";
             return;
         }
-        _messages = await result.Content.ReadFromJsonAsync<List<MessageDTO>>();
+
+        var messages = await result.Content.ReadFromJsonAsync<List<MessageDTO>>();
+
+        _messages = messages!;
+    }
+
+    private async Task Refresh()
+    {
+        await LoadMessagesAsync();
+    }
+
+    private async Task PreviousPage()
+    {
+        PageNumber--;
+        await LoadMessagesAsync();
+    }
+
+    private async Task NextPage()
+    {
+        PageNumber++;
+        await LoadMessagesAsync();
     }
 }
