@@ -14,24 +14,23 @@
 <ContentDisplay text="Loading ..." obj="_messages" Error="@_error">
     <ChildContent>
         <Timeline Messages="_messages" />
+
+        <div class="pagination m-3 d-flex">
+            <button class="btn bg-primary text-white" disabled="@(_pageNumber <= 1)" @onclick="PreviousPage">Prev</button>
+            <span class="m-2">Page @_pageNumber @*of @_totalPages*@</span>
+            <button class="btn bg-primary text-white" @onclick="NextPage">Next</button>
+            <div class="ms-auto d-flex align-items-center">
+                <label for="pageSize" class="">Page Size:</label>
+            </div>
+            <select id="pageSize" class="m-l form-select w-auto" @bind="@_pageSize" @onclick="Refresh">
+                <option value="8">8</option>
+                <option value="16">16</option>
+                <option value="32">32</option>
+                <option value="64">64</option>
+            </select>
+        </div>
     </ChildContent>
 </ContentDisplay>
-
-@if (_messages is {Count: > 0 })
-{
-    <div class="pagination">
-        <button disabled="@(_pageNumber <= 1)" @onclick="PreviousPage">Previous</button>
-        <span>Page@_pageNumber @*of @_totalPages*@</span>
-        <button @onclick="NextPage">Next</button>
-        <label for="pageSize">Page Size:</label>
-        <select id="pageSize" @bind="@_pageSize" @onclick="Refresh" >
-            <option value="8">8</option>
-            <option value="16">16</option>
-            <option value="32">32</option>
-            <option value="64">64</option>
-        </select>
-    </div>
-}
 
 @code {
     private List<MessageDTO>? _messages;
@@ -59,8 +58,6 @@
         }
 
         var messages = await result.Content.ReadFromJsonAsync<List<MessageDTO>>();
-        /*var calculatedPages = Count().Result;
-        _totalPages = (int)Math.Ceiling((double)calculatedPages / _pageSize);*/
 
         _messages = messages!;
     }
@@ -68,14 +65,6 @@
     private async Task Refresh()
     {
         await LoadMessagesAsync();
-    }
-    
-    private async Task<int> Count()
-    {
-        var client = HttpFactory.CreateClient("MiniTwit.UnAuth");
-        
-        var apiCallResult = await client.GetAsync($"api/Message/getcount");
-        return await apiCallResult.Content.ReadFromJsonAsync<int>();
     }
 
     private async Task PreviousPage()
