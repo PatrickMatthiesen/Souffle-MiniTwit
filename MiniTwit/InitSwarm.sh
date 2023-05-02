@@ -28,7 +28,7 @@ ssh """root@$managerIp""" "docker network create --driver overlay minitwit-net"
 
 # create services
 echo -e "${Green}Create services${NC}"
-ssh """root@$managerIp""" "docker service create --name minitwit-souffle --publish 8080:80 --replicas 2 -e ""$CONNECTION_STRING"" -e ""$SERILOG_URI"" ""$DOCKER_USERNAME""/minitwit-souffle:latest"
+ssh """root@$managerIp""" "docker service create --name minitwit-souffle --publish 8080:80 --replicas 2 -e ""$CONNECTION_STRING"" -e ""$SERILOG_URI"" ""$DOCKER_USERNAME""/nginx-souffle:latest"
 
 echo -e "${Green}Create nginx service${NC}"
 ssh """root@$loadBalancerIp""" "docker service create --name nginx-souffle --publish 80:80 --replicas 1 nginx-souffle:latest"

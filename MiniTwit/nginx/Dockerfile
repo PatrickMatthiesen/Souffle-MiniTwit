@@ -5,5 +5,4 @@ COPY ./nginx.conf /etc/nginx/nginx.conf
 COPY ./conf.d/souffle.conf /etc/nginx/conf.d/souffle.conf
 
 EXPOSE 80
-ENTRYPOINT [ "nginx" ]
-CMD ["-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon on;"]
