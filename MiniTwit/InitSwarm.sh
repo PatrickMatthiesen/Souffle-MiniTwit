@@ -31,4 +31,4 @@ echo -e "${Green}Create services${NC}"
 ssh """root@$managerIp""" "docker service create --name minitwit-souffle --publish 8080:80 --replicas 2 -e ""$CONNECTION_STRING"" -e ""$SERILOG_URI"" ""$DOCKER_USERNAME""/minitwit-souffle:latest"
 
 echo -e "${Green}Create nginx service${NC}"
-ssh """root@$loadBalancerIp""" "docker service create --name minitwit-nginx --publish 80:80 --replicas 1 --mount type=bind,source=/root/default.conf,target=/etc/nginx/conf.d/default.conf,readonly nginx"
+ssh """root@$loadBalancerIp""" "docker service create --name nginx-souffle --publish 80:80 --replicas 1 nginx-souffle:latest"
