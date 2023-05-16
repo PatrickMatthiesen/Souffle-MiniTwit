@@ -29,7 +29,9 @@ We chose to rewrite the MiniTwit application to C\#. C\# has a nice web framewor
     \label{fig:projectDependencyGraph}
 \end{wrapfigure}
 
-We aimed to get a simple and maintainable system architecture, by utilizing as few different tools as possible and using software architectural patterns. The patterns we chose to strive for have been Clean architecture, Repository pattern, and client-server. We use several other patterns too, but we don't consider them something we strive for, as they are simply a byproduct of the tools and framework we use. We achieve Clean architecture by having our code split into 4 C\# projects. One project for our data transfer objects (DTO's) and repository interfaces, so we will be able to mock our repositories without a dependency on them. A second project is for the repositories, database context, and models for the database schema. The 
+We aimed to get a simple and maintainable system architecture, by utilizing as few different tools as possible and using software architectural patterns. The patterns we chose to strive for have been Clean architecture, Repository pattern, and client-server. We use several other patterns too, but we don't consider them something we strive for, as they are simply a byproduct of the tools and framework we use. We achieve Clean architecture by having our code split into 4 C\# projects. One project (Shared) for our data transfer objects (DTO's) and repository interfaces, so we will be able to mock our repositories without a dependency on them. A second project (Infrastructure) is for the repositories, database context, and models for the database schema, where the repositories depend on the S. The third project 
+
+ef core
 
 
 
@@ -39,10 +41,25 @@ We aimed to get a simple and maintainable system architecture, by utilizing as f
 \subsection{Dependencies}
 %Should contain a description and illustration of all dependencies of our ITU-MiniTwit system on all levels of abstraction and development stages. That is, list and briefly describe all technologies and tools you applied and depend on.
 
+
 \begin{figure}[H]
     \centering
     \includegraphics[width = 15.0cm, height = 5.0cm]{Images/dependencies2.png}
+    \caption{Package dependency graph}
+    \label{fig:packageDependencyGraph}
 \end{figure}
+
+Below are the dependencies for the deployement level. 
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+    \includegraphics[width=0.9\linewidth]{Images/application_dependencies.png} 
+    \caption{Application dependency graph}
+    \label{fig:ApplicationDependencyGraph}
+\end{wrapfigure}
+
+text here describing dependencies
+make use of elastisearch that displays 
+
 
 %- What are the levels of abstraction?
 %- What are the development stages? Early- Mid- Late?
