@@ -1,12 +1,12 @@
 \setlength{\arrayrulewidth}{0.5mm}
 \setlength{\tabcolsep}{1em}
 \setlength{\parindent}{2em}
-\setlength{\parskip}{1em}
+% \setlength{\parskip}{1em}
+\usepackage[skip=1em]{parskip}
 \renewcommand{\arraystretch}{2}
-\usepackage[utf8]{inputenc}
 \usepackage[backend=biber,style=authoryear,citecounter=true,defernumbers=true]{biblatex}
 % Language setting
-\usepackage[danish]{babel}
+\usepackage[english]{babel}
 \usepackage{array}
 \usepackage{float}
 \usepackage{listings}
@@ -36,12 +36,10 @@
 }
 
 % Set page size and margins
-% Replace `letterpaper' with`a4paper' for UK/EU standard size
 \usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 
 % Useful packages
 \usepackage{verbatim}
-\usepackage{fancyhdr}
 \usepackage{color}
 \usepackage{lastpage}
 \usepackage{amsmath}
