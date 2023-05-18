@@ -100,7 +100,7 @@ Our tasks were organized in GitHub Issues. This made it possible for each member
 
 \subsubsection{Monitoring} \label{Monitoring}
 
-We monitor our system by having Prometheus gather metrics from our metric endpoints regularly. This is made possible by the NuGet package Prometheus.net, which is responsible for exposing a metrics endpoint in our API, which Prometheus can then send requests to. This data is then queried again by Grafana, which is responsible for visualizing it. We can access Grafanas dashboard through the user we set up. Our current metrics are:
+We monitor our system by having Prometheus gather metrics from our metric endpoints regularly. This is made possible by the NuGet package Prometheus.net, which is responsible for exposing a metrics endpoint in our API, which Prometheus can then send requests to. This data is then queried again by Grafana, which is responsible for visualizing it. We can access Grafana's dashboard through the user we set up. Our current metrics are:
 
 \begin{itemize}
     \item Http-requests (Duration)
@@ -111,20 +111,18 @@ We monitor our system by having Prometheus gather metrics from our metric endpoi
 
 \noindent Together, these metrics provide information about how much stress we can expect our system to experience, and what kind of request intensity we can expect. It also provides an overview of user growth, giving us a sense of the direction our service is headed. 
 
-Additionally we are also making use of Digital Ocean to monitor our hardware such as CPU and memory usage of our droplets.
+Additionally, we are also making use of Digital Ocean to monitor our hardware such as the CPU and memory usage of our droplets.
 
 \subsubsection{Logging} \label{Logging}
 
-In order to log we are making use of the Serilog.Sinks.Elasticsearch NuGet Package. In our application we have specified some metrics that ElasticSearch 
+In order to log we are making use of the Serilog.Sinks.Elasticsearch NuGet Package. In our application, we have specified some metrics that ElasticSearch 
 
-Kibana then retrieves the logging-data from this sink and displays.
-We are logging all exceptions, request to the controllers and different functionalities happening in the middleware. 
+Kibana then retrieves the logging data from this sink and displays it.
+We are logging all exceptions, requests to the controllers, and different functionalities happening in the middleware. 
 
 skiftet default logger ud med serilog - andet format 
 alle logs vi får er logs fra middleware 
 default configuration logs - 
-
-
 
 
 Log messages are generated to capture important events, errors, or relevant information during runtime. These logs are collected and forwarded to ElasticSearch, that then indexes and stores the data. Kibana then connects to ElasticSearch 
