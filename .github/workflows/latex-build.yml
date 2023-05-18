@@ -1,5 +1,5 @@
 ---
-name: Continuous Deployment
+name: Build LaTeX document
 
 on:
   push:
@@ -23,8 +23,7 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v2
         with:
-          working_directory: ./Report
-          root_file: main.tex
+          root_file: Report/main.tex
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
