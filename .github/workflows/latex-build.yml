@@ -1,0 +1,33 @@
+---
+name: Continuous Deployment
+
+on:
+  push:
+    # Run workflow every time something is pushed to the main branch
+    branches:
+      - main
+    paths:
+      - 'Report/**'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v3    
+      
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v2
+        with:
+          working_directory: ./Report
+          root_file: main.tex
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          default_author: github_actions
+          message: 'Compiled LaTeX document'
+          add: 'Report/main.pdf'
