@@ -29,7 +29,7 @@ Our application depends on a few NuGet packages to communicate with the rest of 
 \noindent We aimed for our system to have a simple and maintainable architecture, by utilizing as few different tools as possible and by using software architectural patterns. The patterns we chose to strive for have been Clean Architecture, Repository Pattern, and Client-Server. We use several other patterns too, but we don't consider them something we strive for, as they are simply a byproduct of the tools and framework we use. 
 
 \begin{wrapfigure}{r}{0.4\textwidth}
-    \includegraphics[width=0.9\linewidth]{Report/Images/onionStructure.png} 
+    \includegraphics[width=0.9\linewidth]{Images/onionStructure.png} 
     \caption{Project Architecture}
     \label{fig:projectDependencyGraph}
 \end{wrapfigure}
@@ -44,24 +44,24 @@ The route of data in our application starts with the user. When a user sends a r
 \vspace{3pt}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.65\linewidth]{Report/Images/SequenceDevOps.jpg} 
+    \includegraphics[width=0.65\linewidth]{Images/SequenceDevOps.jpg} 
     \caption{Data journey}
     \label{fig:API_Sequence}
 \end{figure}
 \vspace{3pt}
 
-The route starts with the user sending a request to the server. On the server, Kestrel, the web server, receives the request and sends it to the controller method that matches the endpoint the request targeted. The controller then uses one of the repositories, that asks EF Core to format a query and send it to the database. When the database returns data then it aggravates up the ladder again and back to the user.
+The route starts with the user sending a request to the server. The server, Kestrel, receives the request and sends it to the controller method that matches the endpoint the request targeted. The controller then uses one of the repositories, that asks EF Core to format a query and send it to the database. When the database returns data, it aggregates up the ladder and then back again to the user.
 
 \subsubsection{Database}
 \noindent For the server to communicate with the database we chose to use the popular open-source O/RM Entity Framework Core, also known as EF Core. EF Core makes it possible to define the database schemas and maintain the database state. Additionally, it removes the type barriers between code and database while making it possible to query the database without writing SQL, which blocks SQL injection.
 
 \subsubsection{Dependencies}
 %explain the NuGet and pagage dependencies
-At a low level of abstraction, our application has specific dependencies such as libraries and packages. These dependencies are internally within our program and are imported and installed using dotnet as NuGet packages. A visual representation of package dependencies for our application can be seen in figure \ref{fig:packageDependencyGraph}. 
+At a low level of abstraction, our application has specific dependencies such as libraries and packages. These dependencies are internally within our program and are imported and installed using dotnet as NuGet package-manager. A visual representation of package dependencies for our application can be seen in figure \ref{fig:packageDependencyGraph}. 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width = \textwidth]{Report/Images/dependencies2.png}
+    \includegraphics[width = \textwidth]{Images/dependencies2.png}
     \caption{Package dependency graph for C\# application}
     \label{fig:packageDependencyGraph}
     \centering
@@ -73,7 +73,7 @@ This section briefly describes the different tools the system utilizes, and for 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width = 0.6\textwidth]{Report/Images/application_dependencies.png}
+    \includegraphics[width = 0.6\textwidth]{Images/application_dependencies.png}
     \caption{Infrastructure dependency graph}
     \label{fig:infrastructureDependencyGrapg}
     \centering
@@ -84,7 +84,7 @@ This section briefly describes the different tools the system utilizes, and for 
 This is the platform our project is built on. We chose this runtime since it is the one we are most familiar with and it contains a lot of libraries that suits our needs. 
 
 \subsubsection{Docker \& Ubuntu 22.04}
-Docker is responsible for building, shipping, and running our application through containers. It makes it possible to have complete control of the environment in which programs must run (we use Ubuntu 22.04), which simplifies compatibility. Docker Swarm also enables scaling of the system within virtual machines.
+Docker is responsible for building, shipping, and running our application through containers. It makes it possible to have complete control of the environment in which the programs must run (we use Ubuntu 22.04). This ensures compatibility and portability, all it needs to run is docker engine. Docker Swarm also enables scaling of the system within virtual machines.
 
 \subsubsection{Digital Ocean}
 As recommended, Digital Ocean is our chosen provider of cloud infrastructure. It is user-friendly and makes controlling our domain name simple by allowing it to be routed through Digital Oceans NS records. However, as providers go, it is expensive. We had a limited amount of free credits, but we were restricted in the number of virtual machines we could afford. Our system has 2 droplets; one for our server, and one for all our tools. We would have preferred to separate our tools on individual droplets, potentially managed as a swarm for easy balancing, but it was not possible on our budget. 
