@@ -1,57 +1,21 @@
 \section{Lessons Learned Perspective:}
 
-\subsection{Evolution \& Refactoring}
-%Describe the biggest issues, how they were solved, and which major lessons were learned. %Link back to respective commit messages, issues, tickets, etc. to illustrate these.
-%
-%Also reflect and describe what was the "DevOps" style of your work. For example, what %did you do differently to previous development projects and how did it work?
-%
-%- What were biggest errors?
-%- This phase includes:
-%    - Refactoring from old python app
-%        - Add version control
-%        - Develop high-level understanding of MiniTwit
-%        - Migrate to modern computer running Linux
-%        - Refactor to C\#
-%    - Containerizing with Docker
+\subsection{Biggest Issues}
+The following section contains reflections on some of the biggest issues we encountered during this project.
 
+\subsubsection{Refactoring}
+It was recommended to refactor MiniTwit gradually, to avoid unnecessary work and mitigate some of the workload. We chose to ignore this recommendation and do a full refactor to C\# from the beginning. This made for two workload-heavy weeks, but we succeeded which made the following weeks easier. This would most likely have been a mistake if the project was bigger than it was or if the codebase was one we had less experience with.
 
+\subsubsection{E2E Testing}
+During the initial phase of Evolution \& Refactoring, our main issue was end-to-end (E2E) testing. Because we used WebAssembly, we had some issues rendering the pages correctly which made asserting anything from the tests difficult. Implementing E2E testing is a very important part of developing software. The lesson learned in this project is how valuable E2E testing can be in order to detect bugs and prevent technical debt; and not doing this hurt us later in the project. For example, we had problems with our \texttt{follows} endpoint - an issue we didn't realize we had until late in the project.
 
-\subsection{Operation}
-%Describe the biggest issues, how they were solved, and which major lessons were learned. Link back to respective commit messages, issues, tickets, etc. to illustrate these.
+\subsubsection{Database Attack}
+On the first days of operations, our database experienced an unsuccessful bruteforce login attack, that shut down the database. Identifying the problem took time due to our limited experience in accessing container logs.  However, a team member who had taken the Security course was able to promptly identify the issue by examining these logs. After it happened the second time, we made the decision to add a firewall on Digital Ocean's network. This experience taught us a valuable lesson about the presence of malicious agents online, and the importance of considering their actions when maintaining a system.
 
-%Also reflect and describe what was the "DevOps" style of your work. For example, what did you do differently to previous development projects and how did it work?
-%
-% - This phase includes:
-%    - Implementing API
-%    - Cloud deployment, digital ocean
-%    - Create CI/CD setup
-%        - Create SSH, setup remote VM
-%        - Setup Artifacts store
-%        - Configure GitHub Secrets
-%        - Configure env. vars for GitHub Actions
-%        - Create, config. workflows on GH Actions
-%    - Introduce a DB abstraction layer to avoid direct db communication
-%    - Add Monitoring 
-%    - Add pagination
-%    - Add tests to CI chain
-%    - Enhance CI pipeline with static analysis tools
-%    - We never added Sonarqube or Code Climate
-%    - Add logging
-%    - Write an SLA
-%    - Add scaling to projects or hot/standby server
-%    - Rolling update / autorelease
-%    - Automate infrastructure creation using terraform
+\subsubsection{Implementing Scalability}
+After several attempts at using Terraform, an infrastructure-as-code (IaC) tool, we discovered the challenges associated with deployment with a new infrastructure environment. It was something we wanted to implement so we could create, modify and destroy infrastructure in an automated way. After some reflection on our current capacity for scalability, we've come to the conclusion that we could benefit greatly from something like Terraform.
+Our current set-up relies on manual entries of Github-secrets, and hard-defined docker-compose files for deploying to our architecture. This is an area in which we could greatly improve the scalability of our system.
 
-\subsection{Maintenance}
-%Describe the biggest issues, how they were solved, and which major lessons were learned. %Link back to respective commit messages, issues, tickets, etc. to illustrate these.
-%
-%Also reflect and describe what was the "DevOps" style of your work. For example, what %did you do differently to previous development projects and how did it work?
-%
-%- Phase includes:
-%    - Security Assessment
-%    - Keeping an eye on monitoring
-%    - Small bugfixes
-%    - 
-
-% something about why we had less and less commits as the weeks passed by
-
+\subsection{Our DevOps Style of Working}
+The purpose of this course and this project has been to explore the DevOps way of working. MiniTwit is the core this exploration has been built around. As a software project, it resembles those we as developer-students have encountered previously, where the focus has been on the gradual implementation of features. But in this course, the focus has instead been on the utilization of tools and practices that simplify monitoring and maintenance, and automate releases and deployment. These tools and this way of working have provided us with a new perspective on how a project can be structured and managed. It has taught us how certain practices and workflows can act as a catalyst for productivity and quality assurance.
+With DevOps in the toolbox, there are new considerations to make at the start of every new project.
