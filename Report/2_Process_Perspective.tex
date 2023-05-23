@@ -23,50 +23,44 @@ We intended to utilize GitHub Issues to share the tasks between us, making sure 
 %- Github Workflows
 %- Digital Ocean
 % illustration af pipeline
-% deployement and release
+% deployment and release
 % hvilke ting kører vi hvornår og hvorfor
 
 
-\begin{figure}[H]
+% Intro
+In this project, we have implemented a CI/CD chain by defining a handful of \texttt{.yml} files that utilize GitHub Actions. 
+
+Throughout the development stage of our chain, every time we pushed to a feature branch (more on branch strategy in section 2.3), the Super-linter is run except for pushes to main. This isbecause we primarily interact with main through pull-requests. During the development and refactoring of workflows, however, we did permit direct pushes to the main branch. The reason behind this was twofold: firstly, setting up secrets and forking the repository proved to be excessively time-consuming, and secondly, a failed workflow would not disrupt the functionality of our main branch. 
+We also had a daily workflow using Dependabot, that scanned for outdated dependencies and informed us of updates through pull requests. Before any pull requests were merged into main, another developer had to perform a code review as part of our workflow. 
+
+The first thing that happens when a pull request is created is that the application is built. Only building when a pull request is made to the main branch ensures multiple things:
+
+\begin{itemize}
+    \item Changes are isolated
+    \item Since code is reviewed before a pull request is merged into main, code that is not reviewed is never deployed
+    \item Overhead is reduced, by not running unnecessary build cycles on each push to a feature branch
+\end{itemize}
+
+As part of our build stage, we incorporate an additional formatter/linter that operates on the build. This step is implemented to guarantee a greater level of code consistency. Our build workflow proceeds by checking out the branch, restoring the dependencies, building the application and executing the unit tests. This makes the test-stage dependant on the build-stage; if the build fails, the tests are never run. Depending on the test-suite, stability is ensured by making sure changes are tested, and old functionalities do not break (regression testing).
+
+As part of our testing we also implemented a Snyks workflow. Snyks is a security platform designed for finding vulnerabilities in open-source dependencies and doing security scans on the repository. Snyks is a great tool for notifying developers of any found critical vulnerabilities, that would pose a high threat to our application. Additionally, we used a Snyk feature on our code base, that scans the code base for sensitive data like connection strings, secret tokens, API keys, etc. This measure was taken in an effort to mitigate the risk of inadvertently exposing secrets.
+
+\begin{figure}
     \centering
-    \includegraphics[width=0.65\linewidth]{Report/Images/CICD.png} 
-    \caption{CI/CD pipeline}
-    \label{fig:CICD}
+    \includegraphics[width=1.0\linewidth]{Images/CICD_Chain.png}
+    \caption{CI/CD tech-stack}
+    \label{fig:CI/CD Overview}
 \end{figure}
 
+% Deployment workflow in detail:
+After the build-and-test stage of the chain is run successfully, we move to the deployment stage. If either the building or testing fails, the pull request will be rejected.
 
-our CI/CD chain can be split into different stages. 
-Developtment
-- 
-build
-- 
-testing
-- 
-deployment
-- 
+We made a workflow, responsible for the continuous deployment aspect of the pipeline. Through this workflow, we have linked the building, testing, and deployment stages. Combined with the use of GitHub secrets, these workflows provide a powerful solution to automated deployment. Furthermore, it's a convenient way to manage our application's deployment process while maintaining confidentiality and flexibility. 
+However, it does come with a drawback: Scalability is somewhat limited. One example of this is because the workflow uses repository secrets to reference the IP-addresses of our servers.
+If we had been a 'real' company that wanted to change our Server-provider to something other than Digital Ocean, or perhaps just looking to add more servers, we would have to add a separate paragraph to the workflow and update the repository secrets \textit{manually}.
 
-In our application, we have implemented a CI/CD chain by defining a handful of \texttt{.yml} files that utilize GitHub Actions. One of these files is responsible for the continuous deployment aspect of the pipeline. Through this workflow, we have automated the building, testing, and deployment process. Combined with the use of GitHub secrets, these workflows provide a powerful solution to automated deployment. Furthermore, it's a convenient way to manage our application's deployment process while maintaining confidentiality and flexibility. 
-However, it does come with a drawback: Scalability is somewhat limited. This is because the workflow uses repository secrets to reference the Ip-addresses of our servers.
-Had we been a company that wanted to change our Server-provider to something other than DigitalOcean, or simply looking to add more servers, we would have to add a separate paragraph to the workflow and update the repository secrets manually.
-\newpage
-\noindent The stages of our CD are as follows:
-
-\begin{enumerate}
-    \item Login to Docker Hub (using repository-secrets)
-    \item Build and push minitwit-souffle
-    \item Build and push minitwit-db
-    \item Configure SSH (copying ssh-key)
-    \item Deploy to Server (docker stop + rm old, pull and run new images)
-    \item Copy docker-compose files to the server for Monitoring
-    \item Running docker-compose files to start Monitoring
-    \item Copy files for Logging and Deploy
-    \item Running docker-compose files to start logging
-\end{enumerate}
-
-\noindent Additionally, we implemented an auto-release function to further streamline the deployment process, ensuring the latest code changes automatically are pushed to deployment. This was done by making a release each Sunday at 20:00 CEST. 
-
-%%%%%%%%%%%%%%5---- asger tilføj noget her buddyboiiii
-
+% (Release) workflow
+\noindent As an additional last step, we implemented an auto-release function to further streamline the deployment process. This step ensured that the latest changes were automatically released as requested by TA's and teachers. This was a scheduled event, done each Sunday at 20:00 CEST. Another workflow that has to do with automating release, is the Latex workflow. This pulls the current version of the report, each time a push to main is made.
 
 \subsection{Repository Organization \& Development Strategy}
 \subsubsection{Repository Organization}
@@ -115,6 +109,9 @@ Additionally, we are also making use of Digital Ocean to monitor our hardware su
 
 \subsubsection{Logging} \label{Logging}
 
+To implement logging in our project, we used Serilog to do the actual logging, elastic search as the database to hold the logs and Kabana which serves as a UI to view them.
+
+Serilog is a popular nuget package for structuring a logging system.
 In order to log we are making use of the Serilog.Sinks.Elasticsearch NuGet Package. In our application, we have specified some metrics that ElasticSearch 
 
 Kibana then retrieves the logging data from this sink and displays it.
@@ -158,15 +155,27 @@ Our security assessment consisted of a penetration test - Zed Attack Proxy, or Z
 \subsection{Scaling \& Load Balancing}
 %Applied strategy for scaling and load balancing. 
 
-Our applied strategy for scaling and load-balancing, was implementing Docker Swarm for fault tolerance and replication, along with Nginx for load balancing working as a reverse proxy. This combination of Nginxs load balance capabilities and Docker Swarms dynamic scaling would result in an improvement of the systems overall availability and realiability. Hence in case of a system failure Nginx would redirect all load balance from one replica to another while docker swarms dynamically scaling would ensure that the system would be able to keep up with accelerating request and users. However, in our setup, we encountered some internal network delays that affected the system's performance, when Nginx was responsible for redirection. This resulted in Nginx not being fully implemented.
+Our applied strategy for scaling and load balancing involved utilizing Docker Swarm for fault tolerance and easy container management, together with Nginx working primarily as a load balancer and reverse proxy. Docker Swarm uses a cluster of nodes (workers and managers) and allows us to automatically adjust the number of running Docker containers based on the current workload. Another important feature of the swarm is that it automatically evenly distributes incoming requests across the worker containers running the same service (internal load balancing with an ingress mesh).
 
-%------ nogen skal læse det her igennem _------
-%loadbalancer: nginx, reverse proxy, 
+The swarm has a maximum capacity limited to the combined resources (CPU, memory, disk space) of the server nodes within the swarm clusters. We used two servers for our application swarm and one server for the load balancing swarm.
 
-%kinda docker-swarm 
-%- nginx delay?
+The first swarm consists of a server with manager nodes, and a server with worker nodes running containers with our MiniTwit application. The second swarm includes a single manager node responsible for load balancing and reverse-proxying with Nginx. We designed it this way to separate concerns and allow the two swarms to scale independently. Combining Docker Swarm's automatic and dynamic scaling with Nginx's reverse-proxy capabilities resulted in an improvement in the system's availability and reliability.
+
+By having Nginx handle and redirect request to our service, we could eleminate the 'single point of failure', and decrease the impact a server-crash has on our system. In case the primary replica-node running our swarm was flooded or broke down, we could redirect the trafic from that server-node to another upstream server, while docker swarms dynamical scaling would ensure that the system would be able to keep up with accelerating request and users.
+
+However, in our setup, there were a couple of things that could be improved.
+Initially, we only tested our system using a single instance of Nginx, which essentially only shifted the singel point of failure from the application service to the load-balancer in the Swarm. This decision involved weighing the trade-offs between reliability, complexity and also the financial costs of creating more droplets.
+Also, we encountered some non-negligible internal network delays that affected the system's performance. When Nginx was responsible for the load balanceing, request took a long time to complete or re-direct. Due to the way Nginx was implemented it didn't function as originally intended.
+
+
+%------ Asger 21-05-23 ------
+% Har læst det igennem forklarret om docker swarm intern load balanceing og Nginx som ekstern loadbalanceing og fault tolerance. Tilføjet lidt mere detalje om hvorfor vi har to swarms og hvordan vores setup er + begrundelser.
+% Vidste ikke helt noget om dette:
+% Det interne netværk skulle have tilladt redirection, men gjorde det ikke ?
+
+% ----- noter fra før: ------
+%loadbalancer: nginx, reverse proxy, delay
 %- det var meningen at den skulle tage sig af redirection, men det virkede ikke som om at vi kunne det.
-%- Det interne netværk skulle have tilladt redirection, men gjorde det ikke 
 
 \subsection{AI Assistance}
 %In case you have used AI assistants for writing code during your project or to write the report:
