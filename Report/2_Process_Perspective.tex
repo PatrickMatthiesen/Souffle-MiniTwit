@@ -2,48 +2,43 @@
 
 \subsection{Collaborative Development \& Team Organization}
 
-When we initially talked about teaming up we made sure to align our expectations. We agreed that each member expected to spend 8-12 hours a week on the course. Thus our way of working became something like this:
+At group formation, the team aligned expectations. Each member expected to spend 8-12 hours a week on the course, resulting in this schedule:
+
 \begin{itemize}
     \item Tuesday, 10-14: Project Work
     \item Tuesday, 14-16: Lecture
     \item Tuesday, 16-18: Exercises/Project Work
-    \item Friday, 10-15: Project Work (When possible, not each Friday)
+    \item Friday, 10-15: Project Work
 \end{itemize}
 
-The above points were all physically present sessions for all members. Each member had the freedom to do additional work at other times during the week. All communication was through a Discord channel.
+All sessions were in person. Each member had the freedom to do additional work. Communication was through Discord \autocite{discord}.
 
-When working, we would at times do versions of pair programming. Teamwork was however difficult, since all concepts were new to everybody, and a lot of the understanding and progress came from trial and error. All sessions were an open forum where questions were welcome, and help was always possible to get. Sadly, we were not always good at remembering co-authorship on commits which might make the repository contributions look rather skewed.
+When working, we would at times do versions of pair programming. Teamwork was however difficult, since all concepts were new to everybody, and a lot of the understanding and progress came from trial and error. All sessions were an open forum where questions were welcome, and help was always possible to get. Sadly, we were not always good at remembering co-authorship on commits which might make the repository contributions look skewed.
 
-We intended to utilize GitHub Issues to share the tasks between us, making sure not to be wasting time on duplicate work.
-
+We intended to utilize GitHub Issues to share the tasks between us, making sure not to be wasting time on duplicate work \autocite{github-issues}.
 
 \subsection{CI/CD Chain}
-%A complete description of stages and tools included in the CI/CD chains.
-%That is, including deployment and release of your systems.
-%- Github Workflows
-%- Digital Ocean
-% illustration af pipeline
-% deployment and release
-% hvilke ting kører vi hvornår og hvorfor
-
-
-% Intro
-In this project, we have implemented a CI/CD chain by defining a handful of \texttt{.yml} files that utilize GitHub Actions. 
-
-Throughout the development stage of our chain, every time we pushed to a feature branch (more on branch strategy in section 2.3), the Super-linter is run except for pushes to main. This isbecause we primarily interact with main through pull-requests. During the development and refactoring of workflows, however, we did permit direct pushes to the main branch. The reason behind this was twofold: firstly, setting up secrets and forking the repository proved to be excessively time-consuming, and secondly, a failed workflow would not disrupt the functionality of our main branch. 
-We also had a daily workflow using Dependabot, that scanned for outdated dependencies and informed us of updates through pull requests. Before any pull requests were merged into main, another developer had to perform a code review as part of our workflow. 
-
-The first thing that happens when a pull request is created is that the application is built. Only building when a pull request is made to the main branch ensures multiple things:
+In this project, we have implemented a CI/CD chain by defining a handful of \texttt{.yml} files for GitHub Actions. A visual representation can be seen at figure \ref{fig:CI/CD Overview}: 
 
 \begin{itemize}
-    \item Changes are isolated
-    \item Since code is reviewed before a pull request is merged into main, code that is not reviewed is never deployed
-    \item Overhead is reduced, by not running unnecessary build cycles on each push to a feature branch
+    \item github-super-linter
+    \item dotnet-Build-and-Test
+    \item container-snyk
+    \item continuous-deployment
+    \item dotnet-format
+    \item Scheduled-release
+    \item latex-build
 \end{itemize}
 
-As part of our build stage, we incorporate an additional formatter/linter that operates on the build. This step is implemented to guarantee a greater level of code consistency. Our build workflow proceeds by checking out the branch, restoring the dependencies, building the application and executing the unit tests. This makes the test-stage dependant on the build-stage; if the build fails, the tests are never run. Depending on the test-suite, stability is ensured by making sure changes are tested, and old functionalities do not break (regression testing).
+We also configured Dependabot, that scans for outdated dependencies and informs us of updates through pull requests \autocite{dependabot}.
 
-As part of our testing we also implemented a Snyks workflow. Snyks is a security platform designed for finding vulnerabilities in open-source dependencies and doing security scans on the repository. Snyks is a great tool for notifying developers of any found critical vulnerabilities, that would pose a high threat to our application. Additionally, we used a Snyk feature on our code base, that scans the code base for sensitive data like connection strings, secret tokens, API keys, etc. This measure was taken in an effort to mitigate the risk of inadvertently exposing secrets.
+Dotnet-build-and-Test, container-snyk and dotnet-format run simultaneously every time a pull request is created. As part of our workflow, no pull requests were supposed to be merged into main without having a developer review it first. This was not entirely adhered to, however.
+
+Every push to feature branches triggered the Super-linter. The first thing that happens when a pull request is created is that the application is built. We only build the application after pull requests, to avoid running unnecessary build cycles, reducing overhead. The dotnet-format workflow then operates on the build to guarantee a greater level of code consistency. Our build workflow then proceeds by checking out the branch, restoring the dependencies, building the application and executing the unit tests. This makes the test-stage dependant on the build-stage; if the build fails, the tests are never run. Depending on the test-suite, stability is ensured by making sure changes are tested, and old functionalities do not break (regression testing) \autocite{regression-testing}.
+
+The Snyk workflow does security scans on the repository and notifies us of any vulnerabilities in open-source dependencies. Additionally, to mitigate the risk of inadvertently exposing secrets, we used a Snyk feature on our code base to scan for sensitive data like connection strings, secret tokens, API keys, etc.
+
+If either the building or testing fails, the pull request will be rejected.
 
 \begin{figure}
     \centering
@@ -53,14 +48,14 @@ As part of our testing we also implemented a Snyks workflow. Snyks is a security
 \end{figure}
 
 % Deployment workflow in detail:
-After the build-and-test stage of the chain is run successfully, we move to the deployment stage. If either the building or testing fails, the pull request will be rejected.
+The continous-deployment workflow has the purpose of automatically deploying our services. It builds the containers and connects to the cloud droplets and deploys.
 
-We made a workflow, responsible for the continuous deployment aspect of the pipeline. Through this workflow, we have linked the building, testing, and deployment stages. Combined with the use of GitHub secrets, these workflows provide a powerful solution to automated deployment. Furthermore, it's a convenient way to manage our application's deployment process while maintaining confidentiality and flexibility. 
-However, it does come with a drawback: Scalability is somewhat limited. One example of this is because the workflow uses repository secrets to reference the IP-addresses of our servers.
-If we had been a 'real' company that wanted to change our Server-provider to something other than Digital Ocean, or perhaps just looking to add more servers, we would have to add a separate paragraph to the workflow and update the repository secrets \textit{manually}.
+Combined with the use of GitHub Secrets, these workflows provide a powerful solution to automated deployment \autocite{github-secrets}. It's a convenient way to manage our application's deployment process, while maintaining confidentiality and flexibility. This solution does however make scalability difficult because of hardcoded IP-addresses of our servers. This makes any changes tedious, as they would require manual changes to workflows and secrets.
+
+The latex-build workflow only runs when files changed include those in the Report folder. It compiles the components of the report to a .pdf.
 
 % (Release) workflow
-\noindent As an additional last step, we implemented an auto-release function to further streamline the deployment process. This step ensured that the latest changes were automatically released as requested by TA's and teachers. This was a scheduled event, done each Sunday at 20:00 CEST. Another workflow that has to do with automating release, is the Latex workflow. This pulls the current version of the report, each time a push to main is made.
+The auto-release workflow was implemented to further streamline the deployment process. It ensures that the latest changes are automatically released, scheduled for each Sunday at 20:00 CEST. 
 
 \subsection{Repository Organization \& Development Strategy}
 \subsubsection{Repository Organization}
@@ -74,27 +69,18 @@ Another consideration was, that we didn't feel the need to divide it up, as the 
 
 
 \subsubsection{Development Strategy}
-
-We utilized feature branching as our strategy as it has multiple advantages that work very well with the DevOps way of working. An example of this is continuous integration. The GitHub Actions make it simple to automate a require-to-pass test suite before any feature branch is merged into the main one. Other advantages include:
-
-\begin{itemize}
-    \item It isolates changes to specific features, minimizing conflicts with separate work.
-    \item It facilitates the code review process that in turn ensures quality assurance.
-    \item It provides a clear separation of work, which makes collaboration easier.
-    \item It makes parallel development possible.
-\end{itemize}
+We utilized feature branching which adds security gates from a require-to-pass test suite run in GitHub Actions and code reviews from other devs \autocite{github-actions}. Main was intended to be secured by only allowing pushes through pull requests, but we allowed direct pushes as setting up secrets and editing workflows proved time-consuming otherwise.
 
 Our tasks were organized in GitHub Issues. This made it possible for each member to always be able to see which tasks were up for grabs, and who were working on what. It also acted as a task backlog giving an overview of the work that was yet to be done.
 
-\noindent As the project progressed, however, the tasks began including the whole group, and the Issues board became slightly irrelevant.
+As the project progressed, however, the tasks began including the whole group, and the Issues board became slightly irrelevant.
 
 \subsection{Monitoring \& Logging}
 %How do you monitor your systems and what precisely do %you monitor?
 %What do you log in your systems and how do you %aggregate logs?
 
 \subsubsection{Monitoring} \label{Monitoring}
-
-We monitor our system by having Prometheus gather metrics from our metric endpoints regularly. This is made possible by the NuGet package Prometheus.net, which is responsible for exposing a metrics endpoint in our API, which Prometheus can then send requests to. This data is then queried again by Grafana, which is responsible for visualizing it. We can access Grafana's dashboard through the user we set up. Our current metrics are:
+The monitoring of the system is powered by Prometheus which gathers metrics from endpoints created by the Prometheus.net NuGet package \autocite{prometheus}. Metrics are then visualized by Grafana which queries Prometheus \autocite{grafana}. Though Grafana is available to anyone, you would need our login to access the metrics and dashboards. Our current metrics are:
 
 \begin{itemize}
     \item Http-requests (Duration)
@@ -109,37 +95,18 @@ Additionally, we are also making use of Digital Ocean to monitor our hardware su
 
 \subsubsection{Logging} \label{Logging}
 
-To implement logging in our project, we used Serilog to do the actual logging, elastic search as the database to hold the logs and Kabana which serves as a UI to view them.
+Our projects logging is accomplished using the Serilog library, which is a popular logger for C\# \autocite{serilog}. We send the logs to ElasticSearch which stores and indexes them, allowing for fast and efficient lookups \autocite{elasticsearch}. We use Kibana as a UI to view the log files \autocite{kibana}.
 
-Serilog is a popular nuget package for structuring a logging system.
-In order to log we are making use of the Serilog.Sinks.Elasticsearch NuGet Package. In our application, we have specified some metrics that ElasticSearch 
+Serilog provides the ability to have multiple sinks, which are output destinations. We have a sink to ElasticSearch and the console of the container. 
 
-Kibana then retrieves the logging data from this sink and displays it.
-We are logging all exceptions, requests to the controllers, and different functionalities happening in the middleware. 
-
-skiftet default logger ud med serilog - andet format 
-alle logs vi får er logs fra middleware 
-default configuration logs - 
-
-
-Log messages are generated to capture important events, errors, or relevant information during runtime. These logs are collected and forwarded to ElasticSearch, that then indexes and stores the data. Kibana then connects to ElasticSearch 
-
-we use - sink direkte fra .NET direkte ind til (serilog - logging framework). en sink, der hvor alle logs glider hen. Den sink er sat til elastik search hvor kibana kan vise os logs på en pæn måde.
-sender det videre til elastisearch direkte
-det er kun logs fra .Net så vi kan formattere det her og fortælle hvad vi gerne vil logge og hvordan det skal se ud direkte i serilog. 
-der er formartering i serverens programfil, men bliver måske ikke brugt ved deployment. 
-triggers i middleware. når vi modtager request bliver der lavet en log, når den er færdig med at processe - værktøjer der laver logs for os. 
-
-alle exceptions
-request til controllers
-masse andre ting der er I middleware - 
-
-
+%Maybe deletings:
+To tie Serilog and ElasticSearch together with Kibana, we made a docker-compose file responsible for setting up the connection and mounting the data from the container. Kibana then retrieves the logging data from ElasticSearch and displays it.
+% to herings ^
 \subsection{Security Assessment}
 
-Our security assessment consisted of a penetration test - Zed Attack Proxy, or ZAP, that showed some flaws in our program. Most seemed to be relatively simple to fix, and none seemed to be too severe in nature:
+Our security assessment consisted of a penetration test - Zed Attack Proxy, or ZAP, that showed some flaws in our program \autocite{zap}. Most seemed to be relatively simple to fix, and none seemed to be too severe in nature:
 \begin{itemize}
-    \item No Anti-CSRF tokens were found in a HTML submission form
+    \item No Anti-CSRF tokens were found in an HTML submission form
     \item Passive (90022 - Application Error Disclosure)
     \item Content Security Policy (CSP) Header Not Set
     \item Missing Anti-clickjacking Header
@@ -155,38 +122,23 @@ Our security assessment consisted of a penetration test - Zed Attack Proxy, or Z
 \subsection{Scaling \& Load Balancing}
 %Applied strategy for scaling and load balancing. 
 
-Our applied strategy for scaling and load balancing involved utilizing Docker Swarm for fault tolerance and easy container management, together with Nginx working primarily as a load balancer and reverse proxy. Docker Swarm uses a cluster of nodes (workers and managers) and allows us to automatically adjust the number of running Docker containers based on the current workload. Another important feature of the swarm is that it automatically evenly distributes incoming requests across the worker containers running the same service (internal load balancing with an ingress mesh).
+Our applied strategy for scaling and load balancing involved utilizing Docker Swarm for fault tolerance and easy container management, together with Nginx working primarily as a load balancer and reverse proxy \autocite{docker-swarm, nginx}. Docker Swarm uses a cluster of nodes (workers and managers) and allows us to automatically adjust the number of running Docker containers based on the current workload. Another important feature of the swarm is that it automatically evenly distributes incoming requests, across the worker containers running the same service (internal load balancing with an ingress mesh).
 
-The swarm has a maximum capacity limited to the combined resources (CPU, memory, disk space) of the server nodes within the swarm clusters. We used two servers for our application swarm and one server for the load balancing swarm.
+The swarm has a maximum capacity limited to the combined resources (CPU, memory, disk space) of the server nodes within the swarm clusters. We used two servers for our application swarm and one server for the load-balancing swarm.
 
-The first swarm consists of a server with manager nodes, and a server with worker nodes running containers with our MiniTwit application. The second swarm includes a single manager node responsible for load balancing and reverse-proxying with Nginx. We designed it this way to separate concerns and allow the two swarms to scale independently. Combining Docker Swarm's automatic and dynamic scaling with Nginx's reverse-proxy capabilities resulted in an improvement in the system's availability and reliability.
+The first swarm consists of a server with manager nodes and a server with worker nodes running containers with our MiniTwit application. The second swarm includes a single manager node responsible for load balancing and reverse-proxying with Nginx. We designed it this way to separate concerns and allow the two swarms to scale independently. Combining Docker Swarm's automatic and dynamic scaling with Nginx's reverse-proxy capabilities resulted in an improvement in the system's availability and reliability.
 
-By having Nginx handle and redirect request to our service, we could eleminate the 'single point of failure', and decrease the impact a server-crash has on our system. In case the primary replica-node running our swarm was flooded or broke down, we could redirect the trafic from that server-node to another upstream server, while docker swarms dynamical scaling would ensure that the system would be able to keep up with accelerating request and users.
+By having Nginx handle and redirect requests to our service, we could eliminate the 'single point of failure', and decrease the impact a server crash has on our system. In case the primary replica node running our swarm was flooded or broke down, we could redirect the traffic from that server node to another upstream server, while docker swarms dynamical scaling would ensure that the system would be able to keep up with accelerating requests and users.
 
 However, in our setup, there were a couple of things that could be improved.
-Initially, we only tested our system using a single instance of Nginx, which essentially only shifted the singel point of failure from the application service to the load-balancer in the Swarm. This decision involved weighing the trade-offs between reliability, complexity and also the financial costs of creating more droplets.
-Also, we encountered some non-negligible internal network delays that affected the system's performance. When Nginx was responsible for the load balanceing, request took a long time to complete or re-direct. Due to the way Nginx was implemented it didn't function as originally intended.
+Initially, we only tested our system using a single instance of Nginx, which essentially only shifted the single point of failure from the application service to the load balancer in the Swarm. This decision involved weighing the trade-offs between reliability, complexity, and also the financial costs of creating more droplets.
+Also, we encountered some non-negligible internal network delays that affected the system's performance. When Nginx was responsible for the load balancing, requests sometimes took a long time to complete or re-direct. Due to the way Nginx was implemented, it didn't function as originally intended.
 
-
-%------ Asger 21-05-23 ------
-% Har læst det igennem forklarret om docker swarm intern load balanceing og Nginx som ekstern loadbalanceing og fault tolerance. Tilføjet lidt mere detalje om hvorfor vi har to swarms og hvordan vores setup er + begrundelser.
-% Vidste ikke helt noget om dette:
-% Det interne netværk skulle have tilladt redirection, men gjorde det ikke ?
-
-% ----- noter fra før: ------
-%loadbalancer: nginx, reverse proxy, delay
-%- det var meningen at den skulle tage sig af redirection, men det virkede ikke som om at vi kunne det.
 
 \subsection{AI Assistance}
-%In case you have used AI assistants for writing code during your project or to write the report:
-%Explain which system(s) you used during the project.
-%Reflect on how it supported/hindered your process.
-%In essence, it has to be clear how code or other artifacts come from ideas into the running system and everything that happens on the way.
 
+As developers, we have embraced the tool that is AI. We have used ChatGPT as a sparring partner whenever we got a task we did not know how to solve, or when we got stuck \autocite{chatgpt}. It has mostly been good at providing ideas or starting points. But where it really shines is when troubleshooting or debugging. If nothing else, it has provided the services of a rubber duck \autocite{rubber-duck-debugging}.
 
+We have also used it in the formulation of documents like the SLA agreement, as it's mostly boilerplate text anyways. We provided it with some information about our system and what guarantees we could give, and it returned a rough draft we could finalize.
 
-As developers, we have embraced the tool that is AI. We have used ChatGPT as a sparring partner whenever we got a task we did not know how to solve, or when we got stuck. It has been mostly great at providing ideas or starting points, but it has probably been at its best when troubleshooting or debugging. If nothing else it has provided the services of a rubber duck.
-
-We have also used it in the formulation of documents like the SLA agreement, as it is mostly boilerplate text anyways. We provided it with some information about our system and what guarantees we could give, and it returned a rough draft we could finalize.
-
-Finally, one team member has been using GitHub Copilot as an advanced intellisense tool, but not for making several lines of code. Meaning that it was used to finish individual lines of code, but not for making entire methods or blocks of code.
+Finally, one team member has been using GitHub Copilot \autocite{github-copilot} as an advanced intellisense tool, but not for making several lines of code. Meaning that it was used to finish individual lines of code, but not for making entire methods or blocks of code.
