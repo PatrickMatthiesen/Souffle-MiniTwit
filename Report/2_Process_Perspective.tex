@@ -110,6 +110,8 @@ Additionally, we are also making use of Digital Ocean to monitor our hardware su
 \subsubsection{Logging} \label{Logging}
 
 To implement logging in our project, we used Serilog to do the actual logging, elastic search as the database to hold the logs and Kabana which serves as a UI to view them.
+
+Serilog is a popular nuget package for structuring a logging system.
 In order to log we are making use of the Serilog.Sinks.Elasticsearch NuGet Package. In our application, we have specified some metrics that ElasticSearch 
 
 Kibana then retrieves the logging data from this sink and displays it.
