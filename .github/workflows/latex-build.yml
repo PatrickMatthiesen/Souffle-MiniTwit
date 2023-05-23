@@ -8,6 +8,10 @@ on:
       - main
     paths:
       - 'Report/**'
+  # Run workflow manually
+  workflow_dispatch:
+    inputs:
+
 
 permissions:
   contents: write
