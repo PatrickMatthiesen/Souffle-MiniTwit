@@ -6,6 +6,8 @@ on:
     # Run workflow every time something is pushed to the main branch
     branches:
       - main
+    paths:
+      - 'MiniTwit/**'
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:

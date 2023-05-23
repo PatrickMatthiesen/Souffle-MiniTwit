@@ -7,9 +7,13 @@ on:
   push:
     branches:
      - main
+    paths:
+     - 'MiniTwit/**'
+
   pull_request:
     branches:
      - main
+  
 
 jobs:
   build-and-test:
